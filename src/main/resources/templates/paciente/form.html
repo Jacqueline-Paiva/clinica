@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paciente</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            Clínica
+        </div>
+
+        <nav>
+            <a th:href="@{/}">Início</a>
+            <a th:href="@{/pacientes}">Pacientes</a>
+            <a th:href="@{/medicos}">Médicos</a>
+            <a th:href="@{/consultas}">Consultas</a>
+        </nav>
+
+    </header>
+
+    <main class="container">
+
+        <h1 th:text="${paciente.id == null ? 'Novo Paciente' : 'Editar Paciente'}">
+            Paciente
+        </h1>
+
+        <p class="subtitle">
+            Preencha os dados do paciente.
+        </p>
+
+        <div class="form-container">
+
+            <form th:object="${paciente}"
+                  th:action="${paciente.id == null ? '/pacientes/salvar' : '/pacientes/atualizar'}"
+                  method="post">
+
+                <input type="hidden" th:field="*{id}">
+
+                <div class="form-group">
+                    <label>Nome</label>
+
+                    <input type="text"
+                           th:field="*{nome}"
+                           placeholder="Nome do paciente"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>CPF</label>
+
+                    <input type="text"
+                           th:field="*{cpf}"
+                           placeholder="000.000.000-00"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>Telefone</label>
+
+                    <input type="text"
+                           th:field="*{telefone}"
+                           placeholder="(00) 00000-0000"
+                           required>
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Salvar
+                </button>
+
+                <a class="btn btn-secondary"
+                   th:href="@{/pacientes}">
+                    Cancelar
+                </a>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

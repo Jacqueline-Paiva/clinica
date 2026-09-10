@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pacientes</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            Clínica
+        </div>
+
+        <nav>
+            <a th:href="@{/}">Início</a>
+            <a th:href="@{/pacientes}">Pacientes</a>
+            <a th:href="@{/medicos}">Médicos</a>
+            <a th:href="@{/consultas}">Consultas</a>
+        </nav>
+
+    </header>
+
+    <main class="container">
+
+        <div class="page-header">
+
+            <div>
+                <h1>Pacientes</h1>
+                <p class="subtitle">
+                    Pacientes cadastrados na clínica
+                </p>
+            </div>
+
+            <a class="btn btn-primary"
+               th:href="@{/pacientes/novo}">
+                + Novo paciente
+            </a>
+
+        </div>
+
+        <!-- Mensagem de erro -->
+        <div th:if="${erro}"
+             class="alert alert-error"
+             th:text="${erro}">
+        </div>
+
+        <!-- Mensagem de sucesso -->
+        <div th:if="${sucesso}"
+             class="alert alert-success"
+             th:text="${sucesso}">
+        </div>
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>CPF</th>
+                        <th>Telefone</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr th:each="paciente : ${pacientes}">
+
+                        <td th:text="${paciente.id}"></td>
+
+                        <td th:text="${paciente.nome}"></td>
+
+                        <td th:text="${paciente.cpf}"></td>
+
+                        <td th:text="${paciente.telefone}"></td>
+
+                        <td>
+
+                            <a class="btn btn-primary"
+                               th:href="@{/pacientes/{id}/consultas(id=${paciente.id})}">
+                                Consultas
+                            </a>
+
+                            <a class="btn btn-secondary"
+                               th:href="@{/pacientes/editar/{id}(id=${paciente.id})}">
+                                Editar
+                            </a>
+
+                            <a class="btn btn-danger"
+                               th:href="@{/pacientes/excluir/{id}(id=${paciente.id})}">
+                                Excluir
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Médico</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            Clínica
+        </div>
+
+        <nav>
+            <a th:href="@{/}">Início</a>
+            <a th:href="@{/pacientes}">Pacientes</a>
+            <a th:href="@{/medicos}">Médicos</a>
+            <a th:href="@{/consultas}">Consultas</a>
+        </nav>
+
+    </header>
+
+    <main class="container">
+
+        <h1 th:text="${medico.id == null ? 'Novo Médico' : 'Editar Médico'}">
+            Médico
+        </h1>
+
+        <p class="subtitle">
+            Preencha os dados do médico.
+        </p>
+
+        <div class="form-container">
+
+            <form th:object="${medico}"
+                  th:action="${medico.id == null ? '/medicos/salvar' : '/medicos/atualizar'}"
+                  method="post">
+
+                <input type="hidden" th:field="*{id}">
+
+                <div class="form-group">
+                    <label>Nome</label>
+
+                    <input type="text"
+                           th:field="*{nome}"
+                           placeholder="Nome do médico"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>CRM</label>
+
+                    <input type="text"
+                           th:field="*{crm}"
+                           placeholder="Ex.: CRM-TO 1234"
+                           required>
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Salvar
+                </button>
+
+                <a class="btn btn-secondary"
+                   th:href="@{/medicos}">
+                    Cancelar
+                </a>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

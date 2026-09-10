@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title th:text="${consulta.id == null ? 'Nova Consulta' : 'Editar Consulta'}">
+        Consulta
+    </title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            Clínica
+        </div>
+
+        <nav>
+            <a th:href="@{/}">Início</a>
+            <a th:href="@{/pacientes}">Pacientes</a>
+            <a th:href="@{/medicos}">Médicos</a>
+            <a th:href="@{/consultas}">Consultas</a>
+        </nav>
+
+    </header>
+
+    <main class="container">
+
+        <h1 th:text="${consulta.id == null ? 'Nova Consulta' : 'Editar Consulta'}">
+            Consulta
+        </h1>
+
+        <p class="subtitle"
+           th:text="${consulta.id == null
+                    ? 'Preencha os dados para registrar uma nova consulta.'
+                    : 'Altere os dados da consulta selecionada.'}">
+        </p>
+
+        <div class="form-container">
+
+            <form th:object="${consulta}"
+                  th:action="${consulta.id == null ? '/consultas/salvar' : '/consultas/atualizar'}"
+                  method="post">
+
+                <input type="hidden" th:field="*{id}">
+
+                <div class="form-group">
+                    <label for="data">Data e hora</label>
+
+                    <input id="data"
+                           type="datetime-local"
+                           th:field="*{data}"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="pacienteId">Paciente</label>
+
+                    <select id="pacienteId"
+                            name="pacienteId"
+                            required>
+
+                        <option value="">
+                            Selecione o paciente
+                        </option>
+
+                        <option th:each="paciente : ${pacientes}"
+                                th:value="${paciente.id}"
+                                th:text="${paciente.nome}"
+                                th:selected="${consulta.paciente != null and consulta.paciente.id == paciente.id}">
+                        </option>
+
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="medicoId">Médico</label>
+
+                    <select id="medicoId"
+                            name="medicoId"
+                            required>
+
+                        <option value="">
+                            Selecione o médico
+                        </option>
+
+                        <option th:each="medico : ${medicos}"
+                                th:value="${medico.id}"
+                                th:text="${medico.nome}"
+                                th:selected="${consulta.medico != null and consulta.medico.id == medico.id}">
+                        </option>
+
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="valor">Valor da consulta</label>
+
+                    <input id="valor"
+                           type="number"
+                           step="0.01"
+                           min="0"
+                           th:field="*{valor}"
+                           placeholder="0,00"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="observacao">Observação</label>
+
+                    <textarea id="observacao"
+                              th:field="*{observacao}"
+                              rows="4"
+                              placeholder="Informações ou observações sobre a consulta"></textarea>
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Salvar
+                </button>
+
+                <a class="btn btn-secondary"
+                   th:href="@{/consultas}">
+                    Cancelar
+                </a>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

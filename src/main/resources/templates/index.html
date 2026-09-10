@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema da Clínica</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            Clínica
+        </div>
+
+        <nav>
+            <a th:href="@{/}">Início</a>
+            <a th:href="@{/pacientes}">Pacientes</a>
+            <a th:href="@{/medicos}">Médicos</a>
+            <a th:href="@{/consultas}">Consultas</a>
+        </nav>
+
+    </header>
+
+    <main class="container">
+
+        <h1>Sistema da Clínica</h1>
+
+        <p class="subtitle">
+            Gerencie pacientes, médicos e consultas em um só lugar.
+        </p>
+
+        <div class="cards">
+
+            <a class="card" th:href="@{/pacientes}">
+
+                <h2>Pacientes</h2>
+
+                <p>
+                    Cadastre, consulte, edite e gerencie os pacientes da clínica.
+                </p>
+
+            </a>
+
+            <a class="card" th:href="@{/medicos}">
+
+                <h2>Médicos</h2>
+
+                <p>
+                    Consulte os profissionais cadastrados e mantenha seus dados atualizados.
+                </p>
+
+            </a>
+
+            <a class="card" th:href="@{/consultas}">
+
+                <h2>Consultas</h2>
+
+                <p>
+                    Registre consultas e visualize os atendimentos de pacientes e médicos.
+                </p>
+
+            </a>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Consultas do Médico</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            Clínica
+        </div>
+
+        <nav>
+            <a th:href="@{/}">Início</a>
+            <a th:href="@{/pacientes}">Pacientes</a>
+            <a th:href="@{/medicos}">Médicos</a>
+            <a th:href="@{/consultas}">Consultas</a>
+        </nav>
+
+    </header>
+
+    <main class="container">
+
+        <div class="page-header">
+
+            <div>
+                <h1>Consultas do Médico</h1>
+
+                <p class="subtitle">
+                    Consultas realizadas por
+                    <strong th:text="${medico.nome}"></strong>
+                </p>
+            </div>
+
+            <a class="btn btn-secondary"
+               th:href="@{/medicos}">
+                Voltar
+            </a>
+
+        </div>
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Data e hora</th>
+                        <th>Paciente</th>
+                        <th>Valor</th>
+                        <th>Observação</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr th:each="consulta : ${consultas}">
+
+                        <td>
+                            <span th:text="${#temporals.format(consulta.data, 'dd/MM/yyyy')}">
+                            </span>
+
+                            <span class="consulta-hora"
+                                  th:text="'às ' + ${#temporals.format(consulta.data, 'HH:mm')}">
+                            </span>
+                        </td>
+
+                        <td th:text="${consulta.paciente.nome}"></td>
+
+                        <td th:text="'R$ ' + ${#numbers.formatDecimal(consulta.valor, 1, 2)}">
+                        </td>
+
+                        <td th:text="${consulta.observacao}"></td>
+
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(consultas)}">
+                        <td colspan="4">
+                            Este médico ainda não possui consultas cadastradas.
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>
