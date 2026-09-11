@@ -3,19 +3,13 @@ package br.edu.ifto.clinica.model;
 import java.util.List;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 
 @Entity
-public class Medico {
+@PrimaryKeyJoinColumn(name = "id")
+public class Medico extends PessoaFisica {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private String nome;
     private String crm;
 
     @OneToMany(mappedBy = "medico")
@@ -24,25 +18,9 @@ public class Medico {
     public Medico() {
     }
 
-    public Medico(String nome, String crm) {
-        this.nome = nome;
+    public Medico(String email, String telefone, String nome, String cpf, String crm) {
+        super(email, telefone, nome, cpf);
         this.crm = crm;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
     }
 
     public String getCrm() {
@@ -60,8 +38,9 @@ public class Medico {
     public void setConsultas(List<Consulta> consultas) {
         this.consultas = consultas;
     }
+
     public String dados() {
-    return "Nome: " + nome + ", CRM: " + crm;
+        return "Nome: " + getNome() + ", CRM: " + crm;
     }
 
     public String consultas() {

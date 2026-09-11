@@ -27,7 +27,7 @@
 
     </header>
 
-    <main class="container">
+    <main class="container container-wide">
 
         <div class="page-header">
 
@@ -66,6 +66,9 @@
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
+                        <th>CPF</th>
+                        <th>E-mail</th>
+                        <th>Telefone</th>
                         <th>CRM</th>
                         <th>Ações</th>
                     </tr>
@@ -78,6 +81,12 @@
                         <td th:text="${medico.id}"></td>
 
                         <td th:text="${medico.nome}"></td>
+
+                        <td th:text="${medico.cpf}"></td>
+
+                        <td th:text="${medico.email}"></td>
+
+                        <td th:text="${medico.telefone}"></td>
 
                         <td th:text="${medico.crm}"></td>
 

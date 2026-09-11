@@ -54,6 +54,33 @@
                 </div>
 
                 <div class="form-group">
+                    <label>CPF</label>
+
+                    <input type="text"
+                           th:field="*{cpf}"
+                           placeholder="000.000.000-00"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>E-mail</label>
+
+                    <input type="email"
+                           th:field="*{email}"
+                           placeholder="email@exemplo.com"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label>Telefone</label>
+
+                    <input type="text"
+                           th:field="*{telefone}"
+                           placeholder="(00) 00000-0000"
+                           required>
+                </div>
+
+                <div class="form-group">
                     <label>CRM</label>
 
                     <input type="text"

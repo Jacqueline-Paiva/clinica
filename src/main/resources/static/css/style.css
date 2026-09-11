@@ -252,3 +252,9 @@ textarea:focus {
     color: #777;
     font-size: 13px;
 }
+
+/* TABELA DE MÉDICOS */
+
+.container-wide {
+    max-width: 1400px;
+}
