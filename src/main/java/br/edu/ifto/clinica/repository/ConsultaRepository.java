@@ -22,7 +22,9 @@ public class ConsultaRepository {
 
     public List<Consulta> findAll() {
         return entityManager
-                .createQuery("SELECT c FROM Consulta c", Consulta.class)
+                .createQuery(
+                        "SELECT c FROM Consulta c ORDER BY c.data ASC",
+                        Consulta.class)
                 .getResultList();
     }
 
@@ -33,7 +35,7 @@ public class ConsultaRepository {
     public List<Consulta> findByMedico(Long medicoId) {
         return entityManager
                 .createQuery(
-                        "SELECT c FROM Consulta c WHERE c.medico.id = :medicoId",
+                        "SELECT c FROM Consulta c WHERE c.medico.id = :medicoId ORDER BY c.data ASC",
                         Consulta.class)
                 .setParameter("medicoId", medicoId)
                 .getResultList();
@@ -42,7 +44,7 @@ public class ConsultaRepository {
     public List<Consulta> findByPaciente(Long pacienteId) {
         return entityManager
                 .createQuery(
-                        "SELECT c FROM Consulta c WHERE c.paciente.id = :pacienteId",
+                        "SELECT c FROM Consulta c WHERE c.paciente.id = :pacienteId ORDER BY c.data ASC",
                         Consulta.class)
                 .setParameter("pacienteId", pacienteId)
                 .getResultList();

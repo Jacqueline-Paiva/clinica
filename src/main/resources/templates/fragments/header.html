@@ -1,0 +1,66 @@
+<header th:fragment="header">
+
+    <nav class="navbar navbar-expand-lg navbar-dark"
+         style="background-color: #315b63;">
+
+        <div class="container">
+
+            <a class="navbar-brand fw-bold text-white"
+               th:href="@{/}">
+                Clínica
+            </a>
+
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarClinica"
+                    aria-controls="navbarClinica"
+                    aria-expanded="false"
+                    aria-label="Abrir navegação">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+            <div class="collapse navbar-collapse"
+                 id="navbarClinica">
+
+                <ul class="navbar-nav ms-auto">
+
+                    <li class="nav-item">
+                        <a class="nav-link text-white"
+                           th:href="@{/}">
+                            Início
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-white"
+                           th:href="@{/pacientes}">
+                            Pacientes
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-white"
+                           th:href="@{/medicos}">
+                            Médicos
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link text-white"
+                           th:href="@{/consultas}">
+                            Consultas
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+</header>

@@ -21,9 +21,9 @@ public class MedicoRepository {
     }
 
     public List<Medico> findAll() {
-        return entityManager
-                .createQuery("SELECT m FROM Medico m", Medico.class)
-                .getResultList();
+    return entityManager
+        .createQuery("SELECT m FROM Medico m ORDER BY m.nome ASC", Medico.class)
+        .getResultList();
     }
 
     public Medico findById(Long id) {

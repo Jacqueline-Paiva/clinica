@@ -1,42 +1,29 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::head},~{::main})}">
+
+<head th:replace="~{fragments/head :: head(~{::link})}">
     <title>Médico</title>
-
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
 
-    <header class="navbar">
+<main class="container py-5">
 
-        <div class="logo">
-            Clínica
-        </div>
-
-        <nav>
-            <a th:href="@{/}">Início</a>
-            <a th:href="@{/pacientes}">Pacientes</a>
-            <a th:href="@{/medicos}">Médicos</a>
-            <a th:href="@{/consultas}">Consultas</a>
-        </nav>
-
-    </header>
-
-    <main class="container">
-
+    <div class="mb-4">
         <h1 th:text="${medico.id == null ? 'Novo Médico' : 'Editar Médico'}">
             Médico
         </h1>
 
-        <p class="subtitle">
+        <p class="text-muted">
             Preencha os dados do médico.
         </p>
+    </div>
 
-        <div class="form-container">
+    <div class="card shadow-sm">
+        <div class="card-body">
 
             <form th:object="${medico}"
                   th:action="${medico.id == null ? '/medicos/salvar' : '/medicos/atualizar'}"
@@ -44,49 +31,58 @@
 
                 <input type="hidden" th:field="*{id}">
 
-                <div class="form-group">
-                    <label>Nome</label>
+                <div class="row">
 
-                    <input type="text"
-                           th:field="*{nome}"
-                           placeholder="Nome do médico"
-                           required>
-                </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nome</label>
 
-                <div class="form-group">
-                    <label>CPF</label>
+                        <input class="form-control"
+                               type="text"
+                               th:field="*{nome}"
+                               placeholder="Nome do médico"
+                               required>
+                    </div>
 
-                    <input type="text"
-                           th:field="*{cpf}"
-                           placeholder="000.000.000-00"
-                           required>
-                </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">CPF</label>
 
-                <div class="form-group">
-                    <label>E-mail</label>
+                        <input class="form-control"
+                               type="text"
+                               th:field="*{cpf}"
+                               placeholder="000.000.000-00"
+                               required>
+                    </div>
 
-                    <input type="email"
-                           th:field="*{email}"
-                           placeholder="email@exemplo.com"
-                           required>
-                </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">E-mail</label>
 
-                <div class="form-group">
-                    <label>Telefone</label>
+                        <input class="form-control"
+                               type="email"
+                               th:field="*{email}"
+                               placeholder="email@exemplo.com"
+                               required>
+                    </div>
 
-                    <input type="text"
-                           th:field="*{telefone}"
-                           placeholder="(00) 00000-0000"
-                           required>
-                </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Telefone</label>
 
-                <div class="form-group">
-                    <label>CRM</label>
+                        <input class="form-control"
+                               type="text"
+                               th:field="*{telefone}"
+                               placeholder="(00) 00000-0000"
+                               required>
+                    </div>
 
-                    <input type="text"
-                           th:field="*{crm}"
-                           placeholder="Ex.: CRM-TO 1234"
-                           required>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">CRM</label>
+
+                        <input class="form-control"
+                               type="text"
+                               th:field="*{crm}"
+                               placeholder="Ex.: CRM-TO 1234"
+                               required>
+                    </div>
+
                 </div>
 
                 <button type="submit"
@@ -102,9 +98,9 @@
             </form>
 
         </div>
+    </div>
 
-    </main>
+</main>
 
 </body>
-
 </html>

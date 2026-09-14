@@ -21,9 +21,9 @@ public class PacienteRepository {
     }
 
     public List<Paciente> findAll() {
-        return entityManager
-                .createQuery("SELECT p FROM Paciente p", Paciente.class)
-                .getResultList();
+    return entityManager
+        .createQuery("SELECT p FROM Paciente p ORDER BY p.nome ASC", Paciente.class)
+        .getResultList();
     }
 
     public Paciente findById(Long id) {

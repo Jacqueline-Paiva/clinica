@@ -1,124 +1,103 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::head},~{::main})}">
 
+<head th:replace="~{fragments/head :: head(~{::link})}">
     <title>Médicos</title>
-
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
 
-    <header class="navbar">
+<main class="container py-5">
 
-        <div class="logo">
-            Clínica
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1>Médicos</h1>
+
+            <p class="text-muted mb-0">
+                Médicos cadastrados na clínica
+            </p>
         </div>
 
-        <nav>
-            <a th:href="@{/}">Início</a>
-            <a th:href="@{/pacientes}">Pacientes</a>
-            <a th:href="@{/medicos}">Médicos</a>
-            <a th:href="@{/consultas}">Consultas</a>
-        </nav>
+        <a class="btn btn-primary"
+           th:href="@{/medicos/novo}">
+            + Novo médico
+        </a>
 
-    </header>
+    </div>
 
-    <main class="container container-wide">
+    <!-- Mensagem de erro -->
+    <div th:if="${erro}"
+         class="alert alert-danger"
+         th:text="${erro}">
+    </div>
 
-        <div class="page-header">
+    <!-- Mensagem de sucesso -->
+    <div th:if="${sucesso}"
+         class="alert alert-success"
+         th:text="${sucesso}">
+    </div>
 
-            <div>
-                <h1>Médicos</h1>
+    <div class="table-responsive">
 
-                <p class="subtitle">
-                    Médicos cadastrados na clínica
-                </p>
-            </div>
+        <table class="table table-hover align-middle">
 
-            <a class="btn btn-primary"
-               th:href="@{/medicos/novo}">
-                + Novo médico
-            </a>
+            <thead class="table-light">
+                <tr>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>E-mail</th>
+                    <th>Telefone</th>
+                    <th>CRM</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
 
-        </div>
+            <tbody>
 
-        <!-- Mensagem de erro -->
-        <div th:if="${erro}"
-             class="alert alert-error"
-             th:text="${erro}">
-        </div>
+                <tr th:each="medico : ${medicos}">
 
-        <!-- Mensagem de sucesso -->
-        <div th:if="${sucesso}"
-             class="alert alert-success"
-             th:text="${sucesso}">
-        </div>
+                    <td th:text="${medico.nome}"></td>
 
-        <div class="table-container">
+                    <td th:text="${medico.cpf}"></td>
 
-            <table>
+                    <td th:text="${medico.email}"></td>
 
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>CPF</th>
-                        <th>E-mail</th>
-                        <th>Telefone</th>
-                        <th>CRM</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
+                    <td th:text="${medico.telefone}"></td>
 
-                <tbody>
+                    <td th:text="${medico.crm}"></td>
 
-                    <tr th:each="medico : ${medicos}">
+                    <td class="text-nowrap">
 
-                        <td th:text="${medico.id}"></td>
+                        <a class="btn btn-primary btn-sm"
+                           th:href="@{/medicos/{id}/consultas(id=${medico.id})}">
+                            Agenda
+                        </a>
 
-                        <td th:text="${medico.nome}"></td>
+                        <a class="btn btn-secondary btn-sm"
+                           th:href="@{/medicos/editar/{id}(id=${medico.id})}">
+                            Editar
+                        </a>
 
-                        <td th:text="${medico.cpf}"></td>
+                        <a class="btn btn-danger btn-sm"
+                           th:href="@{/medicos/excluir/{id}(id=${medico.id})}">
+                            Excluir
+                        </a>
 
-                        <td th:text="${medico.email}"></td>
+                    </td>
 
-                        <td th:text="${medico.telefone}"></td>
+                </tr>
 
-                        <td th:text="${medico.crm}"></td>
+            </tbody>
 
-                        <td>
+        </table>
 
-                            <a class="btn btn-primary"
-                               th:href="@{/medicos/{id}/consultas(id=${medico.id})}">
-                                Agenda
-                            </a>
+    </div>
 
-                            <a class="btn btn-secondary"
-                               th:href="@{/medicos/editar/{id}(id=${medico.id})}">
-                                Editar
-                            </a>
-
-                            <a class="btn btn-danger"
-                               th:href="@{/medicos/excluir/{id}(id=${medico.id})}">
-                                Excluir
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </main>
+</main>
 
 </body>
-
 </html>

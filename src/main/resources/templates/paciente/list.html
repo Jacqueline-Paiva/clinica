@@ -1,120 +1,99 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::head},~{::main})}">
 
+<head th:replace="~{fragments/head :: head(~{::link})}">
     <title>Pacientes</title>
-
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
 
-    <header class="navbar">
+<main class="container py-5">
 
-        <div class="logo">
-            Clínica
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1>Pacientes</h1>
+            <p class="text-muted mb-0">
+                Pacientes cadastrados na clínica
+            </p>
         </div>
 
-        <nav>
-            <a th:href="@{/}">Início</a>
-            <a th:href="@{/pacientes}">Pacientes</a>
-            <a th:href="@{/medicos}">Médicos</a>
-            <a th:href="@{/consultas}">Consultas</a>
-        </nav>
+        <a class="btn btn-primary"
+           th:href="@{/pacientes/novo}">
+            + Novo paciente
+        </a>
 
-    </header>
+    </div>
 
-    <main class="container">
+    <!-- Mensagem de erro -->
+    <div th:if="${erro}"
+         class="alert alert-danger"
+         th:text="${erro}">
+    </div>
 
-        <div class="page-header">
+    <!-- Mensagem de sucesso -->
+    <div th:if="${sucesso}"
+         class="alert alert-success"
+         th:text="${sucesso}">
+    </div>
 
-            <div>
-                <h1>Pacientes</h1>
-                <p class="subtitle">
-                    Pacientes cadastrados na clínica
-                </p>
-            </div>
+    <div class="table-responsive">
 
-            <a class="btn btn-primary"
-               th:href="@{/pacientes/novo}">
-                + Novo paciente
-            </a>
+        <table class="table table-hover align-middle">
 
-        </div>
+            <thead class="table-light">
+                <tr>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>E-mail</th>
+                    <th>Telefone</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
 
-        <!-- Mensagem de erro -->
-        <div th:if="${erro}"
-             class="alert alert-error"
-             th:text="${erro}">
-        </div>
+            <tbody>
 
-        <!-- Mensagem de sucesso -->
-        <div th:if="${sucesso}"
-             class="alert alert-success"
-             th:text="${sucesso}">
-        </div>
+                <tr th:each="paciente : ${pacientes}">
 
-        <div class="table-container">
+                    <td th:text="${paciente.nome}"></td>
 
-            <table>
+                    <td th:text="${paciente.cpf}"></td>
 
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>CPF</th>
-                        <th>E-mail</th>
-                        <th>Telefone</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
+                    <td th:text="${paciente.email}"></td>
 
-                <tbody>
+                    <td th:text="${paciente.telefone}"></td>
 
-                    <tr th:each="paciente : ${pacientes}">
+                    <td class="text-nowrap">
 
-                        <td th:text="${paciente.id}"></td>
+                        <a class="btn btn-primary btn-sm"
+                           th:href="@{/pacientes/{id}/consultas(id=${paciente.id})}">
+                            Consultas
+                        </a>
 
-                        <td th:text="${paciente.nome}"></td>
+                        <a class="btn btn-secondary btn-sm"
+                           th:href="@{/pacientes/editar/{id}(id=${paciente.id})}">
+                            Editar
+                        </a>
 
-                        <td th:text="${paciente.cpf}"></td>
+                        <a class="btn btn-danger btn-sm"
+                           th:href="@{/pacientes/excluir/{id}(id=${paciente.id})}">
+                            Excluir
+                        </a>
 
-                        <td th:text="${paciente.email}"></td>
+                    </td>
 
-                        <td th:text="${paciente.telefone}"></td>
+                </tr>
 
-                        <td>
+            </tbody>
 
-                            <a class="btn btn-primary"
-                               th:href="@{/pacientes/{id}/consultas(id=${paciente.id})}">
-                                Consultas
-                            </a>
+        </table>
 
-                            <a class="btn btn-secondary"
-                               th:href="@{/pacientes/editar/{id}(id=${paciente.id})}">
-                                Editar
-                            </a>
+    </div>
 
-                            <a class="btn btn-danger"
-                               th:href="@{/pacientes/excluir/{id}(id=${paciente.id})}">
-                                Excluir
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </main>
+</main>
 
 </body>
-
 </html>
