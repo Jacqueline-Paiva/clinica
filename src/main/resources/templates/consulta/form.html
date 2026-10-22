@@ -36,7 +36,8 @@
 
             <form th:object="${consulta}"
                   th:action="${consulta.id == null ? '/consultas/salvar' : '/consultas/atualizar'}"
-                  method="post">
+                  method="post"
+                  novalidate>
 
                 <input type="hidden" th:field="*{id}">
 
@@ -50,9 +51,13 @@
 
                         <input id="data"
                                class="form-control"
+                               th:classappend="${#fields.hasErrors('data')} ? 'is-invalid'"
                                type="datetime-local"
-                               th:field="*{data}"
-                               required>
+                               th:field="*{data}">
+
+                        <div class="invalid-feedback"
+                             th:errors="*{data}">
+                        </div>
 
                     </div>
 
@@ -64,12 +69,15 @@
 
                         <input id="valor"
                                class="form-control"
+                               th:classappend="${#fields.hasErrors('valor')} ? 'is-invalid'"
                                type="number"
                                step="0.01"
-                               min="0"
                                th:field="*{valor}"
-                               placeholder="0,00"
-                               required>
+                               placeholder="0,00">
+
+                        <div class="invalid-feedback"
+                             th:errors="*{valor}">
+                        </div>
 
                     </div>
 
@@ -81,8 +89,7 @@
 
                         <select id="pacienteId"
                                 class="form-select"
-                                name="pacienteId"
-                                required>
+                                name="pacienteId">
 
                             <option value="">
                                 Selecione o paciente
@@ -96,6 +103,11 @@
 
                         </select>
 
+                        <div class="text-danger small mt-1"
+                             th:if="${#fields.hasErrors('paciente')}"
+                             th:errors="*{paciente}">
+                        </div>
+
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -106,8 +118,7 @@
 
                         <select id="medicoId"
                                 class="form-select"
-                                name="medicoId"
-                                required>
+                                name="medicoId">
 
                             <option value="">
                                 Selecione o médico
@@ -120,6 +131,11 @@
                             </option>
 
                         </select>
+
+                        <div class="text-danger small mt-1"
+                             th:if="${#fields.hasErrors('medico')}"
+                             th:errors="*{medico}">
+                        </div>
 
                     </div>
 

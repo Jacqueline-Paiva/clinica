@@ -3,6 +3,7 @@ package br.edu.ifto.clinica.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import br.edu.ifto.clinica.model.Paciente;
 import br.edu.ifto.clinica.repository.ConsultaRepository;
 import br.edu.ifto.clinica.repository.PacienteRepository;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/pacientes")
@@ -38,7 +40,14 @@ public class PacienteController {
     }
 
     @PostMapping("/salvar")
-    public String salvar(Paciente paciente) {
+    public String salvar(
+            @Valid Paciente paciente,
+            BindingResult result) {
+
+        if (result.hasErrors()) {
+            return "paciente/form";
+        }
+
         pacienteRepository.save(paciente);
 
         return "redirect:/pacientes";
@@ -52,7 +61,14 @@ public class PacienteController {
     }
 
     @PostMapping("/atualizar")
-    public String atualizar(Paciente paciente) {
+    public String atualizar(
+            @Valid Paciente paciente,
+            BindingResult result) {
+
+        if (result.hasErrors()) {
+            return "paciente/form";
+        }
+
         pacienteRepository.update(paciente);
 
         return "redirect:/pacientes";

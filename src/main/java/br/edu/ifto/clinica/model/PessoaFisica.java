@@ -2,12 +2,16 @@ package br.edu.ifto.clinica.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
 public class PessoaFisica extends Pessoa {
 
+    @NotBlank(message = "O nome é obrigatório")
     private String nome;
+
+    @NotBlank(message = "O CPF é obrigatório")
     private String cpf;
 
     public PessoaFisica() {

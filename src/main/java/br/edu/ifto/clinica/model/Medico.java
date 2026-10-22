@@ -5,11 +5,13 @@ import java.util.List;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @PrimaryKeyJoinColumn(name = "id")
 public class Medico extends PessoaFisica {
 
+    @NotBlank(message = "O CRM é obrigatório")
     private String crm;
 
     @OneToMany(mappedBy = "medico")

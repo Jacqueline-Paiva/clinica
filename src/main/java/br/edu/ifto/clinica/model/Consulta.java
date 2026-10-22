@@ -7,6 +7,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 public class Consulta {
@@ -15,20 +18,28 @@ public class Consulta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "A data e hora são obrigatórias")
+    @FutureOrPresent(message = "A data da consulta não pode estar no passado")
     private LocalDateTime data;
-    private double valor;
+
+    @NotNull(message = "O valor da consulta é obrigatório")
+    @Positive(message = "O valor da consulta deve ser maior que zero")
+    private Double valor;
+
     private String observacao;
 
     @ManyToOne
+    @NotNull(message = "O paciente é obrigatório")
     private Paciente paciente;
 
     @ManyToOne
+    @NotNull(message = "O médico é obrigatório")
     private Medico medico;
 
     public Consulta() {
     }
 
-    public Consulta(LocalDateTime data, double valor, String observacao,
+    public Consulta(LocalDateTime data, Double valor, String observacao,
                     Paciente paciente, Medico medico) {
         this.data = data;
         this.valor = valor;
@@ -53,11 +64,11 @@ public class Consulta {
         this.data = data;
     }
 
-    public double getValor() {
+    public Double getValor() {
         return valor;
     }
 
-    public void setValor(double valor) {
+    public void setValor(Double valor) {
         this.valor = valor;
     }
 
@@ -84,9 +95,10 @@ public class Consulta {
     public void setMedico(Medico medico) {
         this.medico = medico;
     }
+
     public String dados() {
-    return "Data: " + data
-            + ", Valor: " + valor
-            + ", Observação: " + observacao;
+        return "Data: " + data
+                + ", Valor: " + valor
+                + ", Observação: " + observacao;
     }
 }

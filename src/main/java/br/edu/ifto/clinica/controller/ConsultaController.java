@@ -3,6 +3,7 @@ package br.edu.ifto.clinica.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import br.edu.ifto.clinica.model.Consulta;
 import br.edu.ifto.clinica.repository.ConsultaRepository;
 import br.edu.ifto.clinica.repository.MedicoRepository;
 import br.edu.ifto.clinica.repository.PacienteRepository;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/consultas")
@@ -46,12 +48,38 @@ public class ConsultaController {
 
     @PostMapping("/salvar")
     public String salvar(
-            Consulta consulta,
-            @RequestParam Long pacienteId,
-            @RequestParam Long medicoId) {
+            @Valid Consulta consulta,
+            BindingResult result,
+            @RequestParam(required = false) Long pacienteId,
+            @RequestParam(required = false) Long medicoId,
+            Model model) {
 
-        consulta.setPaciente(pacienteRepository.findById(pacienteId));
-        consulta.setMedico(medicoRepository.findById(medicoId));
+        if (pacienteId == null) {
+            result.rejectValue(
+                    "paciente",
+                    "paciente.obrigatorio",
+                    "O paciente é obrigatório"
+            );
+        } else {
+            consulta.setPaciente(pacienteRepository.findById(pacienteId));
+        }
+
+        if (medicoId == null) {
+            result.rejectValue(
+                    "medico",
+                    "medico.obrigatorio",
+                    "O médico é obrigatório"
+            );
+        } else {
+            consulta.setMedico(medicoRepository.findById(medicoId));
+        }
+
+        if (result.hasErrors()) {
+            model.addAttribute("pacientes", pacienteRepository.findAll());
+            model.addAttribute("medicos", medicoRepository.findAll());
+
+            return "consulta/form";
+        }
 
         consultaRepository.save(consulta);
 
@@ -69,12 +97,38 @@ public class ConsultaController {
 
     @PostMapping("/atualizar")
     public String atualizar(
-            Consulta consulta,
-            @RequestParam Long pacienteId,
-            @RequestParam Long medicoId) {
+            @Valid Consulta consulta,
+            BindingResult result,
+            @RequestParam(required = false) Long pacienteId,
+            @RequestParam(required = false) Long medicoId,
+            Model model) {
 
-        consulta.setPaciente(pacienteRepository.findById(pacienteId));
-        consulta.setMedico(medicoRepository.findById(medicoId));
+        if (pacienteId == null) {
+            result.rejectValue(
+                    "paciente",
+                    "paciente.obrigatorio",
+                    "O paciente é obrigatório"
+            );
+        } else {
+            consulta.setPaciente(pacienteRepository.findById(pacienteId));
+        }
+
+        if (medicoId == null) {
+            result.rejectValue(
+                    "medico",
+                    "medico.obrigatorio",
+                    "O médico é obrigatório"
+            );
+        } else {
+            consulta.setMedico(medicoRepository.findById(medicoId));
+        }
+
+        if (result.hasErrors()) {
+            model.addAttribute("pacientes", pacienteRepository.findAll());
+            model.addAttribute("medicos", medicoRepository.findAll());
+
+            return "consulta/form";
+        }
 
         consultaRepository.update(consulta);
 
