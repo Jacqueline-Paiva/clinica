@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{fragments/layout :: layout(~{::head},~{::main})}">
 
 <head th:replace="~{fragments/head :: head(~{::link})}">
@@ -78,7 +79,8 @@
                             Editar
                         </a>
 
-                        <a class="btn btn-danger btn-sm"
+                        <a sec:authorize="hasRole('ADMIN')"
+                           class="btn btn-danger btn-sm"
                            th:href="@{/consultas/excluir/{id}(id=${consulta.id})}">
                             Excluir
                         </a>

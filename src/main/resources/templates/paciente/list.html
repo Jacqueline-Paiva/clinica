@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{fragments/layout :: layout(~{::head},~{::main})}">
 
 <head th:replace="~{fragments/head :: head(~{::link})}">
@@ -28,13 +29,11 @@
 
     </div>
 
-    <!-- Mensagem de erro -->
     <div th:if="${erro}"
          class="alert alert-danger"
          th:text="${erro}">
     </div>
 
-    <!-- Mensagem de sucesso -->
     <div th:if="${sucesso}"
          class="alert alert-success"
          th:text="${sucesso}">
@@ -78,7 +77,8 @@
                             Editar
                         </a>
 
-                        <a class="btn btn-danger btn-sm"
+                        <a sec:authorize="hasRole('ADMIN')"
+                           class="btn btn-danger btn-sm"
                            th:href="@{/pacientes/excluir/{id}(id=${paciente.id})}">
                             Excluir
                         </a>
