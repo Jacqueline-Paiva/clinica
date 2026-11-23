@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: layout(~{::head},~{::main})}">
+
+<head th:replace="~{fragments/head :: head(~{::link})}">
+    <title>Agendamentos</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<main class="container app-content">
+
+    <!-- CABEÇALHO -->
+
+    <div class="page-header">
+
+        <div>
+
+            <span class="eyebrow">
+                Atendimento
+            </span>
+
+            <h1 sec:authorize="!hasRole('PACIENTE')">
+                Agendamentos
+            </h1>
+
+            <h1 sec:authorize="hasRole('PACIENTE')">
+                Meus agendamentos
+            </h1>
+
+            <p sec:authorize="!hasRole('PACIENTE')">
+                Acompanhe os compromissos que ainda exigem atendimento.
+            </p>
+
+            <p sec:authorize="hasRole('PACIENTE')">
+                Acompanhe suas consultas e retornos.
+            </p>
+
+        </div>
+
+
+        <a th:href="@{/agendamentos/novo}"
+           class="btn btn-primary btn-main"
+           sec:authorize="hasAnyRole('PACIENTE','SECRETARIA','ADMIN')">
+            + Novo agendamento
+        </a>
+
+    </div>
+
+
+    <!-- MENSAGENS -->
+
+    <div th:if="${sucesso}"
+         class="alert alert-success app-alert"
+         th:text="${sucesso}">
+    </div>
+
+    <div th:if="${erro}"
+         class="alert alert-danger app-alert"
+         th:text="${erro}">
+    </div>
+
+
+    <!-- =====================================================
+         AGENDAMENTOS ATIVOS
+         ===================================================== -->
+
+    <section class="appointment-section">
+
+        <div class="section-heading">
+
+            <span class="eyebrow">
+                Próximos
+            </span>
+
+            <h2>
+                Agendamentos ativos
+            </h2>
+
+        </div>
+
+
+        <div class="appointment-list">
+
+            <article class="appointment-card"
+                     th:each="agendamento : ${agendamentos}"
+                     th:if="${agendamento.status.name() == 'AGENDADO'}">
+
+
+                <!-- DATA E HORA -->
+
+                <div class="appointment-datetime">
+
+                    <strong th:text="${#temporals.format(
+                        agendamento.agenda.data,
+                        'dd/MM/yyyy'
+                    )}">
+                        24/11/2026
+                    </strong>
+
+                    <span th:text="${#temporals.format(
+                        agendamento.agenda.horario,
+                        'HH:mm'
+                    )}">
+                        09:00
+                    </span>
+
+                </div>
+
+
+                <!-- PACIENTE -->
+
+                <div class="appointment-person"
+                     sec:authorize="!hasRole('PACIENTE')">
+
+                    <span class="appointment-label">
+                        Paciente
+                    </span>
+
+                    <strong th:text="${agendamento.paciente.nome}">
+                        Maria Santos
+                    </strong>
+
+                </div>
+
+
+                <!-- MÉDICO -->
+
+                <div class="appointment-professional">
+
+                    <span class="appointment-label">
+                        Médico
+                    </span>
+
+                    <strong th:text="${agendamento.agenda.medico.nome}">
+                        Ana Martins
+                    </strong>
+
+                    <span th:text="${agendamento.agenda.medico.especialidade.nome}">
+                        Cardiologia
+                    </span>
+
+                </div>
+
+
+                <!-- TIPO -->
+
+                <div class="appointment-type">
+
+                    <span class="appointment-label">
+                        Tipo
+                    </span>
+
+                    <span class="type-badge"
+                          th:text="${agendamento.tipo}">
+                        CONSULTA
+                    </span>
+
+                </div>
+
+
+                <!-- AÇÕES -->
+
+                <div class="appointment-actions">
+
+                    <a sec:authorize="hasAnyRole('PACIENTE','MEDICO','SECRETARIA','ADMIN')"
+                       th:href="@{/agendamentos/cancelar/{id}(id=${agendamento.id})}"
+                       class="btn btn-sm btn-outline-danger"
+                       onclick="return confirm('Deseja cancelar este agendamento?')">
+                        Cancelar
+                    </a>
+
+                    <a sec:authorize="hasAnyRole('SECRETARIA','ADMIN')"
+                       th:href="@{/agendamentos/confirmar/{id}(id=${agendamento.id})}"
+                       class="btn btn-sm btn-success"
+                       onclick="return confirm('Confirmar a presença do paciente?')">
+                        Confirmar presença
+                    </a>
+
+                </div>
+
+            </article>
+
+        </div>
+
+
+        <!-- SEM AGENDAMENTOS -->
+
+        <div class="compact-empty"
+             th:if="${#lists.isEmpty(
+                agendamentos.?[status.name() == 'AGENDADO']
+             )}">
+            Nenhum agendamento ativo.
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         HISTÓRICO
+         ===================================================== -->
+
+    <section class="appointment-section history-section">
+
+        <details class="history-details">
+
+            <summary>
+
+                <div>
+
+                    <span class="eyebrow">
+                        Histórico
+                    </span>
+
+                    <strong>
+                        Histórico de agendamentos
+                    </strong>
+
+                </div>
+
+                <span class="history-toggle">
+                    Mostrar histórico
+                </span>
+
+            </summary>
+
+
+            <div class="history-list">
+
+                <article class="history-item"
+                         th:each="agendamento : ${agendamentos}"
+                         th:if="${agendamento.status.name() != 'AGENDADO'}">
+
+
+                    <!-- DATA E HORA -->
+
+                    <div class="history-datetime">
+
+                        <strong th:text="${#temporals.format(
+                            agendamento.agenda.data,
+                            'dd/MM/yyyy'
+                        )}">
+                            30/11/2026
+                        </strong>
+
+                        <span th:text="${#temporals.format(
+                            agendamento.agenda.horario,
+                            'HH:mm'
+                        )}">
+                            11:00
+                        </span>
+
+                    </div>
+
+
+                    <!-- PACIENTE -->
+
+                    <div class="history-person"
+                         sec:authorize="!hasRole('PACIENTE')">
+
+                        <span class="appointment-label">
+                            Paciente
+                        </span>
+
+                        <strong th:text="${agendamento.paciente.nome}">
+                            Maria Santos
+                        </strong>
+
+                    </div>
+
+
+                    <!-- MÉDICO -->
+
+                    <div class="history-professional">
+
+                        <span class="appointment-label">
+                            Médico
+                        </span>
+
+                        <strong th:text="${agendamento.agenda.medico.nome}">
+                            Mariana Souza
+                        </strong>
+
+                        <span th:text="${agendamento.agenda.medico.especialidade.nome}">
+                            Dermatologia
+                        </span>
+
+                    </div>
+
+
+                    <!-- TIPO -->
+
+                    <div class="history-type">
+
+                        <span class="appointment-label">
+                            Tipo
+                        </span>
+
+                        <span th:text="${agendamento.tipo}">
+                            RETORNO
+                        </span>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="history-status">
+
+                        <span class="status-badge status-done"
+                              th:if="${agendamento.status.name() == 'REALIZADO'}">
+                            Realizado
+                        </span>
+
+                        <span class="status-badge status-cancelled"
+                              th:if="${agendamento.status.name() == 'CANCELADO'}">
+                            Cancelado
+                        </span>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <!-- SEM HISTÓRICO -->
+
+            <div class="compact-empty"
+                 th:if="${#lists.isEmpty(
+                    agendamentos.?[status.name() != 'AGENDADO']
+                 )}">
+                Ainda não há registros no histórico.
+            </div>
+
+        </details>
+
+    </section>
+
+</main>
+
+</body>
+
+</html>

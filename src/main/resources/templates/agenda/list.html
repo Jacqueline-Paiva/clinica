@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: layout(~{::head},~{::main})}">
+
+<head th:replace="~{fragments/head :: head(~{::link})}">
+    <title>Agenda</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<main class="container app-content">
+
+    <div class="page-header">
+
+        <div>
+            <span class="eyebrow">Atendimentos</span>
+
+            <h1 sec:authorize="hasRole('ADMIN')">
+                Agenda clínica
+            </h1>
+
+            <h1 sec:authorize="hasRole('MEDICO')">
+                Minha agenda
+            </h1>
+
+            <p>
+                Selecione um dia para visualizar os horários.
+            </p>
+        </div>
+
+        <a th:href="@{/agenda/novo}"
+           class="btn btn-primary btn-main"
+           sec:authorize="hasAnyRole('MEDICO','ADMIN')">
+            + Disponibilizar horário
+        </a>
+
+    </div>
+
+    <div th:if="${sucesso}"
+         class="alert alert-success app-alert"
+         th:text="${sucesso}">
+    </div>
+
+    <div class="calendar-layout">
+
+        <!-- CALENDÁRIO -->
+
+        <section class="calendar-card">
+
+            <div class="calendar-header">
+
+                <a class="calendar-nav"
+                   th:href="@{/agenda(
+                        mes=${mesAnterior},
+                        ano=${anoMesAnterior}
+                   )}">
+                    ‹
+                </a>
+
+                <div>
+                    <h2 th:text="${nomeMes + ' ' + ano}">
+                        Novembro 2026
+                    </h2>
+
+                    <span>
+                        Escolha uma data
+                    </span>
+                </div>
+
+                <a class="calendar-nav"
+                   th:href="@{/agenda(
+                        mes=${proximoMes},
+                        ano=${anoProximoMes}
+                   )}">
+                    ›
+                </a>
+
+            </div>
+
+            <div class="calendar-weekdays">
+
+                <span>SEG</span>
+                <span>TER</span>
+                <span>QUA</span>
+                <span>QUI</span>
+                <span>SEX</span>
+                <span>SÁB</span>
+                <span>DOM</span>
+
+            </div>
+
+            <div class="calendar-grid">
+
+                <th:block th:each="numeroDia : ${diasCalendario}">
+
+                    <div th:if="${numeroDia == null}"
+                         class="calendar-day calendar-day-empty">
+                    </div>
+
+                    <a th:if="${numeroDia != null}"
+                       class="calendar-day"
+                       th:classappend="
+                           (${numeroDia == diaSelecionado} ? ' selected' : '')
+                           + (${ano == hoje.year
+                               and mes == hoje.monthValue
+                               and numeroDia == hoje.dayOfMonth}
+                               ? ' today' : '')
+                       "
+                       th:href="@{/agenda(
+                            mes=${mes},
+                            ano=${ano},
+                            dia=${numeroDia}
+                       )}">
+
+                        <span class="calendar-number"
+                              th:text="${numeroDia}">
+                            1
+                        </span>
+
+                        <span class="calendar-count"
+                              th:if="${quantidadePorDia[numeroDia] != null}"
+                              th:text="${quantidadePorDia[numeroDia]}">
+                            2
+                        </span>
+
+                    </a>
+
+                </th:block>
+
+            </div>
+
+            <div class="calendar-legend">
+
+                <span>
+                    <i class="legend-dot"></i>
+                    Número = horários cadastrados no dia
+                </span>
+
+            </div>
+
+        </section>
+
+
+        <!-- HORÁRIOS DO DIA -->
+
+        <section class="day-panel">
+
+            <div class="day-panel-header">
+
+                <div>
+                    <span class="eyebrow">
+                        Dia selecionado
+                    </span>
+
+                    <h2 th:text="${#temporals.format(
+                            dataSelecionada,
+                            'dd/MM/yyyy'
+                        )}">
+                        19/11/2026
+                    </h2>
+                </div>
+
+                <span class="day-total"
+                      th:text="${#lists.size(horariosDoDia) + ' horário(s)'}">
+                    3 horários
+                </span>
+
+            </div>
+
+
+            <div th:if="${#lists.isEmpty(horariosDoDia)}"
+                 class="empty-state">
+
+                <div class="empty-icon">○</div>
+
+                <h3>Nenhum horário neste dia</h3>
+
+                <p>
+                    Selecione outra data no calendário
+                    ou disponibilize um novo horário.
+                </p>
+
+            </div>
+
+
+            <div class="schedule-list"
+                 th:unless="${#lists.isEmpty(horariosDoDia)}">
+
+                <article class="schedule-item"
+                         th:each="horario : ${horariosDoDia}">
+
+                    <div class="schedule-time">
+
+                        <strong th:text="${#temporals.format(
+                                horario.horario,
+                                'HH:mm'
+                            )}">
+                            08:00
+                        </strong>
+
+                    </div>
+
+                    <div class="schedule-info">
+
+                        <strong th:text="${horario.medico.nome}">
+                            Médico
+                        </strong>
+
+                        <span th:text="${horario.medico.especialidade.nome}">
+                            Especialidade
+                        </span>
+
+                    </div>
+
+                    <div class="schedule-status">
+
+                        <span class="status-badge status-available"
+                              th:if="${horario.status.name() == 'DISPONIVEL'}">
+                            Disponível
+                        </span>
+
+                        <span class="status-badge status-booked"
+                              th:if="${horario.status.name() == 'AGENDADO'}">
+                            Agendado
+                        </span>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

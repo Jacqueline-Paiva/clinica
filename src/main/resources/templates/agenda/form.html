@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::head},~{::main})}">
+
+<head th:replace="~{fragments/head :: head(~{::link})}">
+
+    <title>Disponibilizar horário</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+</head>
+
+<body>
+
+<main class="container py-5">
+
+    <div class="mb-4">
+
+        <h1>
+            Disponibilizar horário
+        </h1>
+
+        <p class="text-muted">
+            Informe a data e o horário disponível para atendimento.
+        </p>
+
+    </div>
+
+
+    <!-- ERRO GERAL -->
+
+    <div th:if="${erro}"
+         class="alert alert-danger"
+         th:text="${erro}">
+    </div>
+
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <form th:action="@{/agenda/salvar}"
+                  method="post">
+
+                <div class="row">
+
+
+                    <!-- MÉDICO LOGADO -->
+
+                    <div class="col-md-6 mb-3"
+                         th:if="${medicoLogado}">
+
+                        <label class="form-label">
+                            Médico
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               th:value="${medico != null ? medico.nome : ''}"
+                               readonly>
+
+                        <div th:if="${erroMedico}"
+                             class="text-danger mt-1"
+                             th:text="${erroMedico}">
+                        </div>
+
+                    </div>
+
+
+                    <!-- ADMIN ESCOLHE O MÉDICO -->
+
+                    <div class="col-md-6 mb-3"
+                         th:if="${!medicoLogado}">
+
+                        <label for="medicoId"
+                               class="form-label">
+                            Médico
+                        </label>
+
+                        <select id="medicoId"
+                                name="medicoId"
+                                class="form-select"
+                                th:classappend="${erroMedico != null}
+                                    ? 'is-invalid'">
+
+                            <option value="">
+                                Selecione o médico
+                            </option>
+
+                            <option th:each="item : ${medicos}"
+                                    th:value="${item.id}"
+                                    th:text="${item.nome}"
+                                    th:selected="${medico != null
+                                        and medico.id == item.id}">
+                            </option>
+
+                        </select>
+
+                        <div th:if="${erroMedico}"
+                             class="invalid-feedback"
+                             th:text="${erroMedico}">
+                        </div>
+
+                    </div>
+
+
+                    <!-- DATA -->
+
+                    <div class="col-md-3 mb-3">
+
+                        <label for="data"
+                               class="form-label">
+                            Data
+                        </label>
+
+                        <input id="data"
+                               name="data"
+                               type="date"
+                               class="form-control"
+                               th:classappend="${erroData != null}
+                                    ? 'is-invalid'"
+                               th:value="${data}">
+
+                        <div th:if="${erroData}"
+                             class="invalid-feedback"
+                             th:text="${erroData}">
+                        </div>
+
+                    </div>
+
+
+                    <!-- HORÁRIO -->
+
+                    <div class="col-md-3 mb-3">
+
+                        <label for="horario"
+                               class="form-label">
+                            Horário
+                        </label>
+
+                        <input id="horario"
+                               name="horario"
+                               type="time"
+                               class="form-control"
+                               th:classappend="${erroHorario != null}
+                                    ? 'is-invalid'"
+                               th:value="${horario}">
+
+                        <div th:if="${erroHorario}"
+                             class="invalid-feedback"
+                             th:text="${erroHorario}">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Disponibilizar
+                </button>
+
+                <a th:href="@{/agenda}"
+                   class="btn btn-secondary">
+                    Cancelar
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

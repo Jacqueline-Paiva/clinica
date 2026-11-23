@@ -1,6 +1,7 @@
 package br.edu.ifto.clinica.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,8 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import br.edu.ifto.clinica.model.Medico;
+import br.edu.ifto.clinica.model.Perfil;
+import br.edu.ifto.clinica.model.Usuario;
 import br.edu.ifto.clinica.repository.ConsultaRepository;
+import br.edu.ifto.clinica.repository.EspecialidadeRepository;
 import br.edu.ifto.clinica.repository.MedicoRepository;
+import br.edu.ifto.clinica.repository.PerfilRepository;
+import br.edu.ifto.clinica.repository.UsuarioRepository;
 import jakarta.validation.Valid;
 
 @Controller
@@ -25,16 +31,44 @@ public class MedicoController {
     @Autowired
     private ConsultaRepository consultaRepository;
 
+    @Autowired
+    private EspecialidadeRepository especialidadeRepository;
+
+    @Autowired
+    private PerfilRepository perfilRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @GetMapping
     public String listar(Model model) {
-        model.addAttribute("medicos", medicoRepository.findAll());
+
+        model.addAttribute(
+                "medicos",
+                medicoRepository.findAll()
+        );
 
         return "medico/list";
     }
 
     @GetMapping("/novo")
     public String novo(Model model) {
-        model.addAttribute("medico", new Medico());
+
+        Medico medico = new Medico();
+        medico.setUsuario(new Usuario());
+
+        model.addAttribute(
+                "medico",
+                medico
+        );
+
+        model.addAttribute(
+                "especialidades",
+                especialidadeRepository.findAll()
+        );
 
         return "medico/form";
     }
@@ -42,11 +76,51 @@ public class MedicoController {
     @PostMapping("/salvar")
     public String salvar(
             @Valid Medico medico,
-            BindingResult result) {
+            BindingResult result,
+            Model model) {
+
+        if (medico.getUsuario() != null
+                && usuarioRepository
+                    .findByUsuario(
+                            medico.getUsuario().getUsuario()
+                    )
+                    .isPresent()) {
+
+            result.rejectValue(
+                    "usuario.usuario",
+                    "usuario.duplicado",
+                    "Este nome de usuário já está cadastrado"
+            );
+        }
 
         if (result.hasErrors()) {
+
+            model.addAttribute(
+                    "especialidades",
+                    especialidadeRepository.findAll()
+            );
+
             return "medico/form";
         }
+
+        Perfil perfilMedico = perfilRepository
+                .findByNome("MEDICO")
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Perfil MEDICO não encontrado"
+                        ));
+
+        Usuario usuario = medico.getUsuario();
+
+        usuario.setSenha(
+                passwordEncoder.encode(
+                        usuario.getSenha()
+                )
+        );
+
+        usuario.getPerfis().add(
+                perfilMedico
+        );
 
         medicoRepository.save(medico);
 
@@ -54,8 +128,19 @@ public class MedicoController {
     }
 
     @GetMapping("/editar/{id}")
-    public String editar(@PathVariable Long id, Model model) {
-        model.addAttribute("medico", medicoRepository.findById(id));
+    public String editar(
+            @PathVariable Long id,
+            Model model) {
+
+        model.addAttribute(
+                "medico",
+                medicoRepository.findById(id)
+        );
+
+        model.addAttribute(
+                "especialidades",
+                especialidadeRepository.findAll()
+        );
 
         return "medico/form";
     }
@@ -63,19 +148,67 @@ public class MedicoController {
     @PostMapping("/atualizar")
     public String atualizar(
             @Valid Medico medico,
-            BindingResult result) {
+            BindingResult result,
+            Model model) {
+
+        Medico medicoExistente =
+                medicoRepository.findById(
+                        medico.getId()
+                );
+
+        if (medicoExistente == null) {
+            return "redirect:/medicos";
+        }
 
         if (result.hasErrors()) {
+
+            medico.setUsuario(
+                    medicoExistente.getUsuario()
+            );
+
+            model.addAttribute(
+                    "especialidades",
+                    especialidadeRepository.findAll()
+            );
+
             return "medico/form";
         }
 
-        medicoRepository.update(medico);
+        medicoExistente.setNome(
+                medico.getNome()
+        );
+
+        medicoExistente.setCpf(
+                medico.getCpf()
+        );
+
+        medicoExistente.setEmail(
+                medico.getEmail()
+        );
+
+        medicoExistente.setTelefone(
+                medico.getTelefone()
+        );
+
+        medicoExistente.setCrm(
+                medico.getCrm()
+        );
+
+        medicoExistente.setEspecialidade(
+                medico.getEspecialidade()
+        );
+
+        medicoRepository.update(
+                medicoExistente
+        );
 
         return "redirect:/medicos";
     }
 
     @GetMapping("/{id}/consultas")
-    public String consultas(@PathVariable Long id, Model model) {
+    public String consultas(
+            @PathVariable Long id,
+            Model model) {
 
         model.addAttribute(
                 "medico",
@@ -95,7 +228,9 @@ public class MedicoController {
             @PathVariable Long id,
             RedirectAttributes redirectAttributes) {
 
-        if (!consultaRepository.findByMedico(id).isEmpty()) {
+        if (!consultaRepository
+                .findByMedico(id)
+                .isEmpty()) {
 
             redirectAttributes.addFlashAttribute(
                     "erro",

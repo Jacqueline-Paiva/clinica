@@ -32,10 +32,29 @@ public class ConsultaRepository {
         return entityManager.find(Consulta.class, id);
     }
 
+    public Consulta findByAgendamento(Long agendamentoId) {
+
+        List<Consulta> consultas = entityManager
+                .createQuery(
+                        "SELECT c FROM Consulta c " +
+                        "WHERE c.agendamento.id = :agendamentoId",
+                        Consulta.class)
+                .setParameter("agendamentoId", agendamentoId)
+                .getResultList();
+
+        if (consultas.isEmpty()) {
+            return null;
+        }
+
+        return consultas.get(0);
+    }
+
     public List<Consulta> findByMedico(Long medicoId) {
         return entityManager
                 .createQuery(
-                        "SELECT c FROM Consulta c WHERE c.medico.id = :medicoId ORDER BY c.data ASC",
+                        "SELECT c FROM Consulta c " +
+                        "WHERE c.medico.id = :medicoId " +
+                        "ORDER BY c.data ASC",
                         Consulta.class)
                 .setParameter("medicoId", medicoId)
                 .getResultList();
@@ -44,7 +63,9 @@ public class ConsultaRepository {
     public List<Consulta> findByPaciente(Long pacienteId) {
         return entityManager
                 .createQuery(
-                        "SELECT c FROM Consulta c WHERE c.paciente.id = :pacienteId ORDER BY c.data ASC",
+                        "SELECT c FROM Consulta c " +
+                        "WHERE c.paciente.id = :pacienteId " +
+                        "ORDER BY c.data ASC",
                         Consulta.class)
                 .setParameter("pacienteId", pacienteId)
                 .getResultList();
@@ -57,6 +78,7 @@ public class ConsultaRepository {
 
     @Transactional
     public void delete(Long id) {
+
         Consulta consulta = findById(id);
 
         if (consulta != null) {

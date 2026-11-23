@@ -21,13 +21,34 @@ public class MedicoRepository {
     }
 
     public List<Medico> findAll() {
-    return entityManager
-        .createQuery("SELECT m FROM Medico m ORDER BY m.nome ASC", Medico.class)
-        .getResultList();
+        return entityManager
+                .createQuery(
+                        "SELECT m FROM Medico m ORDER BY m.nome ASC",
+                        Medico.class
+                )
+                .getResultList();
     }
 
     public Medico findById(Long id) {
         return entityManager.find(Medico.class, id);
+    }
+
+    public Medico findByUsuario(String usuario) {
+
+        List<Medico> medicos = entityManager
+                .createQuery(
+                        "SELECT m FROM Medico m " +
+                        "WHERE m.usuario.usuario = :usuario",
+                        Medico.class
+                )
+                .setParameter("usuario", usuario)
+                .getResultList();
+
+        if (medicos.isEmpty()) {
+            return null;
+        }
+
+        return medicos.get(0);
     }
 
     @Transactional
@@ -37,6 +58,7 @@ public class MedicoRepository {
 
     @Transactional
     public void delete(Long id) {
+
         Medico medico = findById(id);
 
         if (medico != null) {

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{fragments/layout :: layout(~{::head},~{::main})}">
 
@@ -11,87 +11,189 @@
 
 <body>
 
-<main class="container py-5">
+<main class="container app-content">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- CABEÇALHO -->
+
+    <div class="page-header">
 
         <div>
+            <span class="eyebrow">Cadastros</span>
+
             <h1>Pacientes</h1>
-            <p class="text-muted mb-0">
-                Pacientes cadastrados na clínica
-            </p>
+
+            <p>Localize um paciente pelo nome ou CPF.</p>
         </div>
 
-        <a class="btn btn-primary"
-           th:href="@{/pacientes/novo}">
+        <a th:href="@{/pacientes/novo}"
+           class="btn btn-primary btn-main"
+           sec:authorize="hasAnyRole('SECRETARIA','ADMIN')">
             + Novo paciente
         </a>
 
     </div>
 
+
+    <!-- MENSAGENS -->
+
     <div th:if="${erro}"
-         class="alert alert-danger"
+         class="alert alert-danger app-alert"
          th:text="${erro}">
     </div>
 
     <div th:if="${sucesso}"
-         class="alert alert-success"
+         class="alert alert-success app-alert"
          th:text="${sucesso}">
     </div>
 
-    <div class="table-responsive">
 
-        <table class="table table-hover align-middle">
+    <!-- PESQUISA -->
 
-            <thead class="table-light">
-                <tr>
-                    <th>Nome</th>
-                    <th>CPF</th>
-                    <th>E-mail</th>
-                    <th>Telefone</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
+    <section class="search-panel">
 
-            <tbody>
+        <form th:action="@{/pacientes}"
+              method="get">
 
-                <tr th:each="paciente : ${pacientes}">
+            <label for="busca"
+                   class="form-label fw-semibold">
+                Buscar paciente
+            </label>
 
-                    <td th:text="${paciente.nome}"></td>
+            <div class="input-group">
 
-                    <td th:text="${paciente.cpf}"></td>
+                <input type="text"
+                       id="busca"
+                       name="busca"
+                       class="form-control"
+                       th:value="${busca}"
+                       placeholder="Digite o nome ou CPF"
+                       autocomplete="off">
 
-                    <td th:text="${paciente.email}"></td>
+                <button type="submit"
+                        class="btn btn-primary search-button">
+                    Pesquisar
+                </button>
 
-                    <td th:text="${paciente.telefone}"></td>
+            </div>
 
-                    <td class="text-nowrap">
+        </form>
 
-                        <a class="btn btn-primary btn-sm"
-                           th:href="@{/pacientes/{id}/consultas(id=${paciente.id})}">
-                            Consultas
-                        </a>
+    </section>
 
-                        <a class="btn btn-secondary btn-sm"
-                           th:href="@{/pacientes/editar/{id}(id=${paciente.id})}">
-                            Editar
-                        </a>
 
-                        <a sec:authorize="hasRole('ADMIN')"
-                           class="btn btn-danger btn-sm"
-                           th:href="@{/pacientes/excluir/{id}(id=${paciente.id})}">
-                            Excluir
-                        </a>
+    <!-- ANTES DE PESQUISAR -->
 
-                    </td>
+    <section th:if="${!pesquisou}"
+             class="empty-state">
 
-                </tr>
+        <h2>Pesquise um paciente</h2>
 
-            </tbody>
+        <p>
+            Digite parte do nome ou CPF para localizar
+            o cadastro e ver a ficha médica.
+        </p>
 
-        </table>
+    </section>
 
-    </div>
+
+    <!-- NENHUM RESULTADO -->
+
+    <section th:if="${pesquisou and #lists.isEmpty(pacientes)}"
+             class="empty-state">
+
+        <h2>Nenhum paciente encontrado</h2>
+
+        <p>
+            Não encontramos pacientes correspondentes a
+            <strong th:text="${busca}"></strong>.
+        </p>
+
+    </section>
+
+
+    <!-- RESULTADOS -->
+
+    <section th:if="${pesquisou and !#lists.isEmpty(pacientes)}"
+             class="patient-results">
+
+        <div class="results-header">
+
+            <div>
+                <span class="eyebrow">Resultado</span>
+
+                <h2>Pacientes encontrados</h2>
+            </div>
+
+            <span class="result-count"
+                  th:text="${#lists.size(pacientes) + ' resultado(s)'}">
+            </span>
+
+        </div>
+
+
+        <!-- LISTA -->
+
+        <div class="patient-result-list">
+
+            <article th:each="paciente : ${pacientes}"
+                     class="patient-result-item">
+
+                <div class="patient-result-content">
+
+                    <!-- NOME -->
+
+                    <div class="patient-result-name"
+                         th:text="${paciente.nome}">
+                        João Silva
+                    </div>
+
+
+                    <!-- DADOS PARA IDENTIFICAÇÃO -->
+
+                    <div class="patient-result-details">
+
+                        <span>
+                            <span class="patient-result-label">
+                                CPF:
+                            </span>
+
+                            <strong th:text="${paciente.cpf}">
+                                000.000.000-00
+                            </strong>
+                        </span>
+
+
+                        <span>
+                            <span class="patient-result-label">
+                                Telefone:
+                            </span>
+
+                            <strong th:text="${paciente.telefone}">
+                                (63) 99999-9999
+                            </strong>
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- AÇÃO -->
+
+                <div class="patient-result-action">
+
+                    <a th:href="@{/pacientes/{id}/consultas(id=${paciente.id})}"
+                       class="btn btn-outline-primary btn-sm">
+                        Ver ficha médica →
+                    </a>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </section>
 
 </main>
 

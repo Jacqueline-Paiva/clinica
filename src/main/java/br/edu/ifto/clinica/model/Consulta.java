@@ -6,8 +6,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -19,10 +20,8 @@ public class Consulta {
     private Long id;
 
     @NotNull(message = "A data e hora são obrigatórias")
-    @FutureOrPresent(message = "A data da consulta não pode estar no passado")
     private LocalDateTime data;
 
-    @NotNull(message = "O valor da consulta é obrigatório")
     @Positive(message = "O valor da consulta deve ser maior que zero")
     private Double valor;
 
@@ -36,11 +35,20 @@ public class Consulta {
     @NotNull(message = "O médico é obrigatório")
     private Medico medico;
 
+    @OneToOne
+    @JoinColumn(name = "agendamento_id", unique = true)
+    private Agendamento agendamento;
+
     public Consulta() {
     }
 
-    public Consulta(LocalDateTime data, Double valor, String observacao,
-                    Paciente paciente, Medico medico) {
+    public Consulta(
+            LocalDateTime data,
+            Double valor,
+            String observacao,
+            Paciente paciente,
+            Medico medico) {
+
         this.data = data;
         this.valor = valor;
         this.observacao = observacao;
@@ -94,6 +102,14 @@ public class Consulta {
 
     public void setMedico(Medico medico) {
         this.medico = medico;
+    }
+
+    public Agendamento getAgendamento() {
+        return agendamento;
+    }
+
+    public void setAgendamento(Agendamento agendamento) {
+        this.agendamento = agendamento;
     }
 
     public String dados() {

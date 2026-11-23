@@ -2,13 +2,13 @@
         xmlns:th="http://www.thymeleaf.org"
         xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-    <nav class="navbar navbar-expand-lg navbar-dark"
-         style="background-color: #315b63;">
+    <nav class="navbar navbar-expand-lg navbar-dark app-navbar">
 
         <div class="container">
 
-            <a class="navbar-brand fw-bold text-white"
+            <a class="navbar-brand app-brand"
                th:href="@{/}">
+                <span class="brand-mark">+</span>
                 Clínica
             </a>
 
@@ -27,58 +27,88 @@
             <div class="collapse navbar-collapse"
                  id="navbarClinica">
 
-                <ul class="navbar-nav ms-auto align-items-lg-center">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
 
                     <li class="nav-item">
-                        <a class="nav-link text-white"
+                        <a class="nav-link"
                            th:href="@{/}">
                             Início
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link text-white"
+                    <li class="nav-item"
+                        sec:authorize="hasAnyRole('MEDICO','ADMIN')">
+
+                        <a class="nav-link"
+                           th:href="@{/agenda}">
+                            Agenda
+                        </a>
+                    </li>
+
+                    <li class="nav-item"
+                        sec:authorize="hasAnyRole('PACIENTE','MEDICO','SECRETARIA','ADMIN')">
+
+                        <a class="nav-link"
+                           th:href="@{/agendamentos}">
+                            Agendamentos
+                        </a>
+                    </li>
+
+                    <li class="nav-item"
+                        sec:authorize="hasAnyRole('MEDICO','SECRETARIA','ADMIN')">
+
+                        <a class="nav-link"
                            th:href="@{/pacientes}">
                             Pacientes
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link text-white"
+                    <li class="nav-item"
+                        sec:authorize="hasRole('ADMIN')">
+
+                        <a class="nav-link"
                            th:href="@{/medicos}">
                             Médicos
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link text-white"
+                    <li class="nav-item"
+                        sec:authorize="hasAnyRole('PACIENTE','MEDICO','SECRETARIA','ADMIN')">
+
+                        <a class="nav-link"
                            th:href="@{/consultas}">
                             Consultas
                         </a>
                     </li>
 
-                    <li class="nav-item ms-lg-3">
-                        <span class="navbar-text text-white">
-                            Olá,
-                            <strong sec:authentication="name"></strong>
-                        </span>
-                    </li>
-
-                    <li class="nav-item ms-lg-3">
-
-                        <form th:action="@{/logout}"
-                              method="post">
-
-                            <button type="submit"
-                                    class="btn btn-outline-light btn-sm">
-                                Sair
-                            </button>
-
-                        </form>
-
-                    </li>
-
                 </ul>
+
+                <div class="user-area ms-lg-4 mt-3 mt-lg-0">
+
+                    <div class="user-identification">
+
+                        <span class="user-avatar">
+                            <span sec:authentication="name"></span>
+                        </span>
+
+                        <div class="user-text">
+                            <small>Conectado como</small>
+                            <strong sec:authentication="name"></strong>
+                        </div>
+
+                    </div>
+
+                    <form th:action="@{/logout}"
+                          method="post">
+
+                        <button type="submit"
+                                class="btn btn-logout">
+                            Sair
+                        </button>
+
+                    </form>
+
+                </div>
 
             </div>
 

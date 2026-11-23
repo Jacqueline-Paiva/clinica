@@ -1,79 +1,345 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{fragments/layout :: layout(~{::head},~{::main})}">
 
 <head th:replace="~{fragments/head :: head(~{::link})}">
-    <title>Sistema da Clínica</title>
+    <title>Clínica</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
 
-<main class="container py-5">
+<main class="container app-content">
 
-    <div class="text-center mb-5">
-        <h1>Sistema da Clínica</h1>
+    <section class="welcome-section">
 
-        <p class="text-muted">
-            Gerencie pacientes, médicos e consultas em um só lugar.
-        </p>
-    </div>
+        <div>
 
-    <div class="row g-4">
+            <span class="eyebrow">
+                Sistema de atendimento
+            </span>
 
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h2 class="card-title h4">Pacientes</h2>
+            <h1>
+                Olá,
+                <span sec:authentication="name"></span>.
+            </h1>
 
-                    <p class="card-text">
-                        Cadastre, consulte, edite e gerencie os pacientes da clínica.
-                    </p>
+            <p sec:authorize="hasRole('ADMIN')">
+                Acesse a gestão da clínica e acompanhe os atendimentos.
+            </p>
 
-                    <a class="btn btn-primary"
-                       th:href="@{/pacientes}">
-                        Acessar pacientes
-                    </a>
-                </div>
-            </div>
+            <p sec:authorize="hasRole('SECRETARIA')">
+                Organize os pacientes e acompanhe os agendamentos da clínica.
+            </p>
+
+            <p sec:authorize="hasRole('MEDICO')">
+                Consulte sua agenda, seus pacientes e os atendimentos.
+            </p>
+
+            <p sec:authorize="hasRole('PACIENTE')">
+                Consulte seus horários ou faça um novo agendamento.
+            </p>
+
         </div>
 
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h2 class="card-title h4">Médicos</h2>
+    </section>
 
-                    <p class="card-text">
-                        Consulte os profissionais cadastrados e mantenha seus dados atualizados.
-                    </p>
+    <section class="dashboard-grid">
 
-                    <a class="btn btn-primary"
-                       th:href="@{/medicos}">
-                        Acessar médicos
-                    </a>
-                </div>
+        <!-- PACIENTE -->
+
+        <a th:href="@{/agendamentos/novo}"
+           class="dashboard-card dashboard-card-featured"
+           sec:authorize="hasRole('PACIENTE')">
+
+            <div class="dashboard-icon">+</div>
+
+            <div>
+                <h2>Agendar consulta</h2>
+                <p>
+                    Escolha especialidade, médico,
+                    data e horário disponíveis.
+                </p>
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h2 class="card-title h4">Consultas</h2>
+            <span class="dashboard-arrow">→</span>
 
-                    <p class="card-text">
-                        Registre consultas e visualize os atendimentos de pacientes e médicos.
-                    </p>
+        </a>
 
-                    <a class="btn btn-primary"
-                       th:href="@{/consultas}">
-                        Acessar consultas
-                    </a>
-                </div>
+        <a th:href="@{/agendamentos}"
+           class="dashboard-card"
+           sec:authorize="hasRole('PACIENTE')">
+
+            <div class="dashboard-icon">A</div>
+
+            <div>
+                <h2>Meus agendamentos</h2>
+                <p>
+                    Veja consultas, retornos
+                    e cancelamentos.
+                </p>
             </div>
-        </div>
 
-    </div>
+            <span class="dashboard-arrow">→</span>
+
+        </a>
+
+        <a th:href="@{/consultas}"
+           class="dashboard-card"
+           sec:authorize="hasRole('PACIENTE')">
+
+            <div class="dashboard-icon">H</div>
+
+            <div>
+                <h2>Meu histórico</h2>
+                <p>
+                    Consulte seus atendimentos realizados.
+                </p>
+            </div>
+
+            <span class="dashboard-arrow">→</span>
+
+        </a>
+
+
+        <!-- MÉDICO -->
+
+        <a th:href="@{/agenda}"
+           class="dashboard-card dashboard-card-featured"
+           sec:authorize="hasRole('MEDICO')">
+
+            <div class="dashboard-icon">A</div>
+
+            <div>
+                <h2>Minha agenda</h2>
+                <p>
+                    Consulte e disponibilize seus horários.
+                </p>
+            </div>
+
+            <span class="dashboard-arrow">→</span>
+
+        </a>
+
+        <a th:href="@{/agendamentos}"
+           class="dashboard-card"
+           sec:authorize="hasRole('MEDICO')">
+
+            <div class="dashboard-icon">C</div>
+
+            <div>
+                <h2>Compromissos</h2>
+                <p>
+                    Veja os pacientes agendados
+                    para atendimento.
+                </p>
+            </div>
+
+            <span class="dashboard-arrow">→</span>
+
+        </a>
+
+        <a th:href="@{/pacientes}"
+           class="dashboard-card"
+           sec:authorize="hasRole('MEDICO')">
+
+            <div class="dashboard-icon">P</div>
+
+            <div>
+                <h2>Pacientes</h2>
+                <p>
+                    Pesquise pacientes e consulte históricos.
+                </p>
+            </div>
+
+            <span class="dashboard-arrow">→</span>
+
+        </a>
+
+        <a th:href="@{/consultas}"
+           class="dashboard-card"
+           sec:authorize="hasRole('MEDICO')">
+
+            <div class="dashboard-icon">H</div>
+
+            <div>
+                <h2>Atendimentos</h2>
+                <p>
+                    Acesse as consultas realizadas.
+                </p>
+            </div>
+
+            <span class="dashboard-arrow">→</span>
+
+        </a>
+
+
+        <!-- SECRETARIA -->
+
+        <a th:href="@{/agendamentos}"
+           class="dashboard-card dashboard-card-featured"
+           sec:authorize="hasRole('SECRETARIA')">
+
+            <div class="dashboard-icon">A</div>
+
+            <div>
+                <h2>Agendamentos</h2>
+                <p>
+                    Organize os atendimentos
+                    e confirme presenças.
+                </p>
+            </div>
+
+            <span class="dashboard-arrow">→</span>
+
+        </a>
+
+        <a th:href="@{/agendamentos/novo}"
+           class="dashboard-card"
+           sec:authorize="hasRole('SECRETARIA')">
+
+            <div class="dashboard-icon">+</div>
+
+            <div>
+                <h2>Novo agendamento</h2>
+                <p>
+                    Agende uma consulta para um paciente.
+                </p>
+            </div>
+
+            <span class="dashboard-arrow">→</span>
+
+        </a>
+
+        <a th:href="@{/pacientes}"
+           class="dashboard-card"
+           sec:authorize="hasRole('SECRETARIA')">
+
+            <div class="dashboard-icon">P</div>
+
+            <div>
+                <h2>Pacientes</h2>
+                <p>
+                    Pesquise, cadastre e atualize pacientes.
+                </p>
+            </div>
+
+            <span class="dashboard-arrow">→</span>
+
+        </a>
+
+        <a th:href="@{/consultas}"
+           class="dashboard-card"
+           sec:authorize="hasRole('SECRETARIA')">
+
+            <div class="dashboard-icon">H</div>
+
+            <div>
+                <h2>Consultas</h2>
+                <p>
+                    Consulte os atendimentos realizados.
+                </p>
+            </div>
+
+            <span class="dashboard-arrow">→</span>
+
+        </a>
+
+
+        <!-- ADMIN -->
+
+        <a th:href="@{/agenda}"
+           class="dashboard-card dashboard-card-featured"
+           sec:authorize="hasRole('ADMIN')">
+
+            <div class="dashboard-icon">A</div>
+
+            <div>
+                <h2>Agenda clínica</h2>
+                <p>
+                    Visualize os horários
+                    de todos os profissionais.
+                </p>
+            </div>
+
+            <span class="dashboard-arrow">→</span>
+
+        </a>
+
+        <a th:href="@{/agendamentos}"
+           class="dashboard-card"
+           sec:authorize="hasRole('ADMIN')">
+
+            <div class="dashboard-icon">C</div>
+
+            <div>
+                <h2>Agendamentos</h2>
+                <p>
+                    Gerencie consultas, retornos
+                    e confirmações.
+                </p>
+            </div>
+
+            <span class="dashboard-arrow">→</span>
+
+        </a>
+
+        <a th:href="@{/pacientes}"
+           class="dashboard-card"
+           sec:authorize="hasRole('ADMIN')">
+
+            <div class="dashboard-icon">P</div>
+
+            <div>
+                <h2>Pacientes</h2>
+                <p>
+                    Consulte cadastros e históricos.
+                </p>
+            </div>
+
+            <span class="dashboard-arrow">→</span>
+
+        </a>
+
+        <a th:href="@{/medicos}"
+           class="dashboard-card"
+           sec:authorize="hasRole('ADMIN')">
+
+            <div class="dashboard-icon">M</div>
+
+            <div>
+                <h2>Médicos</h2>
+                <p>
+                    Gerencie profissionais
+                    e especialidades.
+                </p>
+            </div>
+
+            <span class="dashboard-arrow">→</span>
+
+        </a>
+
+        <a th:href="@{/consultas}"
+           class="dashboard-card"
+           sec:authorize="hasRole('ADMIN')">
+
+            <div class="dashboard-icon">H</div>
+
+            <div>
+                <h2>Consultas</h2>
+                <p>
+                    Consulte o histórico
+                    de atendimentos.
+                </p>
+            </div>
+
+            <span class="dashboard-arrow">→</span>
+
+        </a>
+
+    </section>
 
 </main>
 

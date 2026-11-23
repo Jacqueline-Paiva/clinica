@@ -1,80 +1,428 @@
 <!DOCTYPE html>
-
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{fragments/layout :: layout(~{::head},~{::main})}">
 
 <head th:replace="~{fragments/head :: head(~{::link})}">
-    <title>Consultas do Paciente</title>
+    <title>Ficha Médica</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 
 <body>
 
-<main class="container py-5">
+<main class="container app-content">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- CABEÇALHO -->
+
+    <div class="page-header mb-4">
 
         <div>
-            <h1>Consultas do Paciente</h1>
+            <span class="eyebrow">Ficha médica</span>
 
-            <p class="text-muted mb-0">
-                Histórico de consultas de
-                <strong th:text="${paciente.nome}"></strong>
+            <h1 th:text="${paciente.nome}">
+                João Silva
+            </h1>
+
+            <p>
+                Dados cadastrais e histórico de atendimento.
             </p>
         </div>
 
-        <a class="btn btn-secondary"
-           th:href="@{/pacientes}">
-            Voltar
-        </a>
-
     </div>
 
-    <div class="table-responsive">
 
-        <table class="table table-hover align-middle">
+    <!-- DADOS CADASTRAIS -->
 
-            <thead class="table-light">
-                <tr>
-                    <th>Data e hora</th>
-                    <th>Médico</th>
-                    <th>Valor</th>
-                    <th>Observação</th>
-                </tr>
-            </thead>
+    <section class="card border-0 shadow-sm mb-4">
 
-            <tbody>
+        <div class="card-body p-4">
 
-                <tr th:each="consulta : ${consultas}">
+            <div class="mb-4">
+                <span class="eyebrow">Cadastro</span>
 
-                    <td>
-                        <span th:text="${#temporals.format(consulta.data, 'dd/MM/yyyy')}">
+                <h2 class="fs-5 mb-0">
+                    Dados do paciente
+                </h2>
+            </div>
+
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+
+                    <div class="text-secondary small mb-1">
+                        Nome completo
+                    </div>
+
+                    <div class="fw-semibold"
+                         th:text="${paciente.nome}">
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <div class="text-secondary small mb-1">
+                        CPF
+                    </div>
+
+                    <div class="fw-semibold"
+                         th:text="${paciente.cpf}">
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <div class="text-secondary small mb-1">
+                        Telefone
+                    </div>
+
+                    <div class="fw-semibold"
+                         th:text="${paciente.telefone}">
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <div class="text-secondary small mb-1">
+                        E-mail
+                    </div>
+
+                    <div class="fw-semibold"
+                         th:text="${paciente.email}">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- AGENDAMENTOS -->
+
+    <section class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between
+                        align-items-center mb-4">
+
+                <div>
+                    <span class="eyebrow">Histórico</span>
+
+                    <h2 class="fs-5 mb-0">
+                        Agendamentos
+                    </h2>
+                </div>
+
+                <span class="badge text-bg-light border px-3 py-2"
+                      th:text="${#lists.size(agendamentos) + ' registro(s)'}">
+                </span>
+
+            </div>
+
+
+            <!-- SEM AGENDAMENTOS -->
+
+            <div th:if="${#lists.isEmpty(agendamentos)}"
+                 class="text-secondary text-center py-4">
+
+                Nenhum agendamento registrado.
+
+            </div>
+
+
+            <!-- LISTA -->
+
+            <div th:unless="${#lists.isEmpty(agendamentos)}"
+                 class="medical-history-list">
+
+                <div th:each="agendamento : ${agendamentos}"
+                     class="medical-history-row">
+
+                    <!-- DATA E HORA -->
+
+                    <div class="medical-date">
+
+                        <span class="medical-label">
+                            Data e horário
                         </span>
 
-                        <span class="d-block text-muted small"
-                              th:text="'às ' + ${#temporals.format(consulta.data, 'HH:mm')}">
+                        <strong>
+                            <span th:text="${#temporals.format(
+                                agendamento.agenda.data,
+                                'dd/MM/yyyy'
+                            )}">
+                            </span>
+
+                            <span class="mx-1">às</span>
+
+                            <span th:text="${#temporals.format(
+                                agendamento.agenda.horario,
+                                'HH:mm'
+                            )}">
+                            </span>
+                        </strong>
+
+                    </div>
+
+
+                    <!-- MÉDICO -->
+
+                    <div>
+
+                        <span class="medical-label">
+                            Médico
                         </span>
-                    </td>
 
-                    <td th:text="${consulta.medico.nome}"></td>
+                        <strong th:text="${agendamento.agenda.medico.nome}">
+                        </strong>
 
-                    <td th:text="'R$ ' + ${#numbers.formatDecimal(consulta.valor, 1, 2)}">
-                    </td>
+                        <small class="d-block text-secondary"
+                               th:text="${agendamento.agenda.medico.especialidade.nome}">
+                        </small>
 
-                    <td th:text="${consulta.observacao}"></td>
+                    </div>
 
-                </tr>
 
-                <tr th:if="${#lists.isEmpty(consultas)}">
-                    <td colspan="4"
-                        class="text-center text-muted py-4">
-                        Este paciente ainda não possui consultas cadastradas.
-                    </td>
-                </tr>
+                    <!-- TIPO -->
 
-            </tbody>
+                    <div>
 
-        </table>
+                        <span class="medical-label">
+                            Tipo
+                        </span>
+
+                        <strong th:text="${agendamento.tipo}">
+                        </strong>
+
+                    </div>
+
+
+                    <!-- STATUS -->
+
+                    <div class="medical-status">
+
+                        <span class="status-badge status-booked"
+                              th:if="${agendamento.status.name() == 'AGENDADO'}">
+                            Agendado
+                        </span>
+
+                        <span class="status-badge status-done"
+                              th:if="${agendamento.status.name() == 'REALIZADO'}">
+                            Realizado
+                        </span>
+
+                        <span class="status-badge status-cancelled"
+                              th:if="${agendamento.status.name() == 'CANCELADO'}">
+                            Cancelado
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CONSULTAS REALIZADAS -->
+
+    <section class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between
+                        align-items-center mb-4">
+
+                <div>
+                    <span class="eyebrow">Atendimento</span>
+
+                    <h2 class="fs-5 mb-0">
+                        Consultas realizadas
+                    </h2>
+                </div>
+
+                <span class="badge text-bg-light border px-3 py-2"
+                      th:text="${#lists.size(consultas) + ' consulta(s)'}">
+                </span>
+
+            </div>
+
+
+            <!-- SEM CONSULTAS -->
+
+            <div th:if="${#lists.isEmpty(consultas)}"
+                 class="text-secondary text-center py-4">
+
+                Nenhuma consulta realizada.
+
+            </div>
+
+
+            <!-- CONSULTAS -->
+
+            <div th:unless="${#lists.isEmpty(consultas)}"
+                 class="medical-history-list">
+
+                <div th:each="consulta : ${consultas}"
+                     class="medical-consultation">
+
+                    <div class="medical-consultation-top">
+
+                        <!-- DATA -->
+
+                        <div>
+
+                            <span class="medical-label">
+                                Data e horário
+                            </span>
+
+                            <strong>
+                                <span th:text="${#temporals.format(
+                                    consulta.data,
+                                    'dd/MM/yyyy'
+                                )}">
+                                </span>
+
+                                <span class="mx-1">às</span>
+
+                                <span th:text="${#temporals.format(
+                                    consulta.data,
+                                    'HH:mm'
+                                )}">
+                                </span>
+                            </strong>
+
+                        </div>
+
+
+                        <!-- MÉDICO -->
+
+                        <div>
+
+                            <span class="medical-label">
+                                Médico
+                            </span>
+
+                            <strong th:text="${consulta.medico.nome}">
+                            </strong>
+
+                            <small class="d-block text-secondary"
+                                   th:text="${consulta.medico.especialidade.nome}">
+                            </small>
+
+                        </div>
+
+
+                        <!-- TIPO -->
+
+                        <div>
+
+                            <span class="medical-label">
+                                Tipo
+                            </span>
+
+                            <strong th:if="${consulta.agendamento != null}"
+                                    th:text="${consulta.agendamento.tipo}">
+                            </strong>
+
+                            <strong th:if="${consulta.agendamento == null}">
+                                Consulta
+                            </strong>
+
+                        </div>
+
+
+                        <!-- VALOR -->
+
+                        <div>
+
+                            <span class="medical-label">
+                                Valor
+                            </span>
+
+                            <strong th:if="${consulta.valor != null}"
+                                    th:text="'R$ ' + ${#numbers.formatDecimal(
+                                        consulta.valor,
+                                        1,
+                                        2
+                                    )}">
+                            </strong>
+
+                            <strong th:if="${consulta.valor == null}">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- OBSERVAÇÃO -->
+
+                    <div class="medical-observation"
+                         th:if="${consulta.observacao != null
+                                 and !consulta.observacao.isBlank()}">
+
+                        <span class="medical-label">
+                            Observação
+                        </span>
+
+                        <p th:text="${consulta.observacao}">
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- AÇÕES DO CRUD -->
+
+    <div class="d-flex justify-content-between
+                align-items-center flex-wrap gap-2
+                pt-2 pb-4">
+
+        <a th:href="@{/pacientes}"
+           class="btn btn-outline-secondary">
+            ← Voltar
+        </a>
+
+
+        <div class="d-flex gap-2">
+
+            <a th:href="@{/pacientes/editar/{id}(id=${paciente.id})}"
+               class="btn btn-primary"
+               sec:authorize="hasAnyRole('MEDICO','SECRETARIA','ADMIN')">
+                Editar paciente
+            </a>
+
+            <a th:href="@{/pacientes/excluir/{id}(id=${paciente.id})}"
+               class="btn btn-outline-danger"
+               sec:authorize="hasRole('ADMIN')"
+               onclick="return confirm('Deseja realmente excluir este paciente?')">
+                Excluir paciente
+            </a>
+
+        </div>
 
     </div>
 

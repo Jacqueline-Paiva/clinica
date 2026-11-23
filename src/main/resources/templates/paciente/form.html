@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="pt-BR"
+      xmlns:th="http://www.thymeleaf.org"
       th:replace="~{fragments/layout :: layout(~{::head},~{::main})}">
 
 <head th:replace="~{fragments/head :: head(~{::link})}">
@@ -10,102 +10,291 @@
 
 <body>
 
-<main class="container py-5">
+<main class="container app-content">
 
-    <div class="mb-4">
-        <h1 th:text="${paciente.id == null ? 'Novo Paciente' : 'Editar Paciente'}">
-            Paciente
-        </h1>
+    <!-- CABEÇALHO -->
 
-        <p class="text-muted">
-            Preencha os dados do paciente.
-        </p>
+    <div class="page-header">
+
+        <div>
+
+            <span class="eyebrow">
+                Cadastro
+            </span>
+
+            <h1 th:text="${paciente.id == null
+                         ? 'Novo paciente'
+                         : 'Editar paciente'}">
+                Novo paciente
+            </h1>
+
+            <p th:text="${paciente.id == null
+                        ? 'Cadastre os dados pessoais e o acesso do paciente.'
+                        : 'Atualize os dados cadastrais do paciente.'}">
+            </p>
+
+        </div>
+
     </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
 
-            <form th:object="${paciente}"
-                  th:action="${paciente.id == null ? '/pacientes/salvar' : '/pacientes/atualizar'}"
-                  method="post"
-                  novalidate>
+    <!-- FORMULÁRIO -->
 
-                <input type="hidden" th:field="*{id}">
+    <form th:object="${paciente}"
+          th:action="${paciente.id == null
+                     ? '/pacientes/salvar'
+                     : '/pacientes/atualizar'}"
+          method="post">
 
-                <div class="row">
+        <input type="hidden"
+               th:if="${paciente.id != null}"
+               th:field="*{id}">
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Nome</label>
 
-                        <input class="form-control"
-                               th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid'"
-                               type="text"
+        <!-- DADOS PESSOAIS -->
+
+        <section class="card border-0 shadow-sm mb-4">
+
+            <div class="card-body p-4">
+
+                <div class="mb-4">
+
+                    <span class="eyebrow">
+                        Paciente
+                    </span>
+
+                    <h2 class="fs-5 mb-1">
+                        Dados pessoais
+                    </h2>
+
+                    <p class="text-secondary small mb-0">
+                        Informe os dados de identificação e contato.
+                    </p>
+
+                </div>
+
+
+                <div class="row g-4">
+
+                    <!-- NOME -->
+
+                    <div class="col-12">
+
+                        <label for="nome"
+                               class="form-label fw-semibold">
+                            Nome completo
+                        </label>
+
+                        <input type="text"
+                               id="nome"
                                th:field="*{nome}"
-                               placeholder="Nome do paciente">
+                               class="form-control"
+                               placeholder="Nome completo do paciente">
 
-                        <div class="invalid-feedback"
+                        <div class="text-danger small mt-1"
+                             th:if="${#fields.hasErrors('nome')}"
                              th:errors="*{nome}">
                         </div>
+
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">CPF</label>
 
-                        <input class="form-control"
-                               th:classappend="${#fields.hasErrors('cpf')} ? 'is-invalid'"
-                               type="text"
+                    <!-- CPF -->
+
+                    <div class="col-md-6">
+
+                        <label for="cpf"
+                               class="form-label fw-semibold">
+                            CPF
+                        </label>
+
+                        <input type="text"
+                               id="cpf"
                                th:field="*{cpf}"
+                               class="form-control mascara-cpf"
+                               maxlength="14"
+                               inputmode="numeric"
                                placeholder="000.000.000-00">
 
-                        <div class="invalid-feedback"
+                        <div class="form-text">
+                            Digite apenas os números. A formatação é automática.
+                        </div>
+
+                        <div class="text-danger small mt-1"
+                             th:if="${#fields.hasErrors('cpf')}"
                              th:errors="*{cpf}">
                         </div>
+
                     </div>
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">E-mail</label>
 
-                        <input class="form-control"
-                               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
-                               type="email"
-                               th:field="*{email}"
-                               placeholder="email@exemplo.com">
+                    <!-- TELEFONE -->
 
-                        <div class="invalid-feedback"
-                             th:errors="*{email}">
-                        </div>
-                    </div>
+                    <div class="col-md-6">
 
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Telefone</label>
+                        <label for="telefone"
+                               class="form-label fw-semibold">
+                            Telefone
+                        </label>
 
-                        <input class="form-control"
-                               th:classappend="${#fields.hasErrors('telefone')} ? 'is-invalid'"
-                               type="text"
+                        <input type="text"
+                               id="telefone"
                                th:field="*{telefone}"
+                               class="form-control mascara-telefone"
+                               maxlength="15"
+                               inputmode="numeric"
                                placeholder="(00) 00000-0000">
 
-                        <div class="invalid-feedback"
+                        <div class="form-text">
+                            DDD + número do telefone.
+                        </div>
+
+                        <div class="text-danger small mt-1"
+                             th:if="${#fields.hasErrors('telefone')}"
                              th:errors="*{telefone}">
                         </div>
+
+                    </div>
+
+
+                    <!-- E-MAIL -->
+
+                    <div class="col-12">
+
+                        <label for="email"
+                               class="form-label fw-semibold">
+                            E-mail
+                        </label>
+
+                        <input type="email"
+                               id="email"
+                               th:field="*{email}"
+                               class="form-control"
+                               placeholder="paciente@email.com">
+
+                        <div class="text-danger small mt-1"
+                             th:if="${#fields.hasErrors('email')}"
+                             th:errors="*{email}">
+                        </div>
+
                     </div>
 
                 </div>
 
-                <button type="submit"
-                        class="btn btn-primary">
-                    Salvar
-                </button>
+            </div>
 
-                <a class="btn btn-secondary"
-                   th:href="@{/pacientes}">
-                    Cancelar
-                </a>
+        </section>
 
-            </form>
+
+        <!-- ACESSO AO SISTEMA
+             SOMENTE NO NOVO CADASTRO -->
+
+        <section class="card border-0 shadow-sm mb-4"
+                 th:if="${paciente.id == null}">
+
+            <div class="card-body p-4">
+
+                <div class="mb-4">
+
+                    <span class="eyebrow">
+                        Acesso
+                    </span>
+
+                    <h2 class="fs-5 mb-1">
+                        Credenciais do paciente
+                    </h2>
+
+                    <p class="text-secondary small mb-0">
+                        Estes dados serão utilizados para acessar o sistema.
+                    </p>
+
+                </div>
+
+
+                <div class="row g-4">
+
+                    <!-- USUÁRIO -->
+
+                    <div class="col-md-6">
+
+                        <label for="usuario"
+                               class="form-label fw-semibold">
+                            Usuário
+                        </label>
+
+                        <input type="text"
+                               id="usuario"
+                               th:field="*{usuario.usuario}"
+                               class="form-control"
+                               autocomplete="username"
+                               placeholder="Nome de usuário">
+
+                        <div class="text-danger small mt-1"
+                             th:if="${#fields.hasErrors('usuario.usuario')}"
+                             th:errors="*{usuario.usuario}">
+                        </div>
+
+                    </div>
+
+
+                    <!-- SENHA -->
+
+                    <div class="col-md-6">
+
+                        <label for="senha"
+                               class="form-label fw-semibold">
+                            Senha
+                        </label>
+
+                        <input type="password"
+                               id="senha"
+                               th:field="*{usuario.senha}"
+                               class="form-control"
+                               autocomplete="new-password"
+                               placeholder="Senha de acesso">
+
+                        <div class="text-danger small mt-1"
+                             th:if="${#fields.hasErrors('usuario.senha')}"
+                             th:errors="*{usuario.senha}">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- BOTÕES -->
+
+        <div class="d-flex justify-content-between
+                    align-items-center flex-wrap gap-2
+                    pb-4">
+
+            <a th:href="@{/pacientes}"
+               class="btn btn-outline-secondary">
+                ← Cancelar
+            </a>
+
+
+            <button type="submit"
+                    class="btn btn-primary px-4"
+                    th:text="${paciente.id == null
+                             ? 'Cadastrar paciente'
+                             : 'Salvar alterações'}">
+                Cadastrar paciente
+            </button>
 
         </div>
-    </div>
+
+    </form>
+
+
+    <!-- MÁSCARAS -->
+
+    <script th:src="@{/js/mascaras.js}"></script>
 
 </main>
 

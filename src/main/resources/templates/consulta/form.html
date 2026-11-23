@@ -5,9 +5,7 @@
 
 <head th:replace="~{fragments/head :: head(~{::link})}">
 
-    <title th:text="${consulta.id == null ? 'Nova Consulta' : 'Editar Consulta'}">
-        Consulta
-    </title>
+    <title>Atendimento da Consulta</title>
 
     <link rel="stylesheet" th:href="@{/css/style.css}">
 
@@ -19,155 +17,125 @@
 
     <div class="mb-4">
 
-        <h1 th:text="${consulta.id == null ? 'Nova Consulta' : 'Editar Consulta'}">
-            Consulta
-        </h1>
+        <h1>Atendimento da Consulta</h1>
 
-        <p class="text-muted"
-           th:text="${consulta.id == null
-                    ? 'Preencha os dados para registrar uma nova consulta.'
-                    : 'Altere os dados da consulta selecionada.'}">
+        <p class="text-muted">
+            Preencha as informações do atendimento realizado.
         </p>
 
     </div>
 
     <div class="card shadow-sm">
+
         <div class="card-body">
 
             <form th:object="${consulta}"
-                  th:action="${consulta.id == null ? '/consultas/salvar' : '/consultas/atualizar'}"
+                  th:action="@{/consultas/atualizar}"
                   method="post"
                   novalidate>
 
-                <input type="hidden" th:field="*{id}">
+                <input type="hidden"
+                       th:field="*{id}">
 
                 <div class="row">
 
                     <div class="col-md-6 mb-3">
 
-                        <label for="data" class="form-label">
-                            Data e hora
+                        <label class="form-label">
+                            Paciente
                         </label>
 
-                        <input id="data"
+                        <input type="text"
                                class="form-control"
-                               th:classappend="${#fields.hasErrors('data')} ? 'is-invalid'"
-                               type="datetime-local"
-                               th:field="*{data}">
-
-                        <div class="invalid-feedback"
-                             th:errors="*{data}">
-                        </div>
+                               th:value="${consulta.paciente.nome}"
+                               readonly>
 
                     </div>
 
                     <div class="col-md-6 mb-3">
 
-                        <label for="valor" class="form-label">
+                        <label class="form-label">
+                            Médico
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               th:value="${consulta.medico.nome}"
+                               readonly>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Data
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               th:value="${#temporals.format(
+                                    consulta.data,
+                                    'dd/MM/yyyy HH:mm'
+                               )}"
+                               readonly>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label for="valor"
+                               class="form-label">
                             Valor da consulta
                         </label>
 
                         <input id="valor"
-                               class="form-control"
-                               th:classappend="${#fields.hasErrors('valor')} ? 'is-invalid'"
                                type="number"
                                step="0.01"
+                               min="0.01"
+                               class="form-control"
+                               th:classappend="${#fields.hasErrors('valor')} ? 'is-invalid'"
                                th:field="*{valor}"
                                placeholder="0,00">
 
-                        <div class="invalid-feedback"
-                             th:errors="*{valor}">
-                        </div>
-
+                    <div class="text-danger mt-1"
+                                th:if="${erroValor}"
+                                th:text="${erroValor}">
                     </div>
-
-                    <div class="col-md-6 mb-3">
-
-                        <label for="pacienteId" class="form-label">
-                            Paciente
-                        </label>
-
-                        <select id="pacienteId"
-                                class="form-select"
-                                name="pacienteId">
-
-                            <option value="">
-                                Selecione o paciente
-                            </option>
-
-                            <option th:each="paciente : ${pacientes}"
-                                    th:value="${paciente.id}"
-                                    th:text="${paciente.nome}"
-                                    th:selected="${consulta.paciente != null and consulta.paciente.id == paciente.id}">
-                            </option>
-
-                        </select>
-
-                        <div class="text-danger small mt-1"
-                             th:if="${#fields.hasErrors('paciente')}"
-                             th:errors="*{paciente}">
-                        </div>
-
-                    </div>
-
-                    <div class="col-md-6 mb-3">
-
-                        <label for="medicoId" class="form-label">
-                            Médico
-                        </label>
-
-                        <select id="medicoId"
-                                class="form-select"
-                                name="medicoId">
-
-                            <option value="">
-                                Selecione o médico
-                            </option>
-
-                            <option th:each="medico : ${medicos}"
-                                    th:value="${medico.id}"
-                                    th:text="${medico.nome}"
-                                    th:selected="${consulta.medico != null and consulta.medico.id == medico.id}">
-                            </option>
-
-                        </select>
-
-                        <div class="text-danger small mt-1"
-                             th:if="${#fields.hasErrors('medico')}"
-                             th:errors="*{medico}">
-                        </div>
 
                     </div>
 
                     <div class="col-12 mb-3">
 
-                        <label for="observacao" class="form-label">
+                        <label for="observacao"
+                               class="form-label">
                             Observação
                         </label>
 
                         <textarea id="observacao"
                                   class="form-control"
                                   th:field="*{observacao}"
-                                  rows="4"
-                                  placeholder="Informações ou observações sobre a consulta">
+                                  rows="5"
+                                  placeholder="Informações e observações sobre o atendimento">
                         </textarea>
 
                     </div>
 
                 </div>
 
-                <button type="submit" class="btn btn-primary">
-                    Salvar
+                <button type="submit"
+                        class="btn btn-primary">
+                    Salvar atendimento
                 </button>
 
                 <a class="btn btn-secondary"
                    th:href="@{/consultas}">
-                    Cancelar
+                    Voltar
                 </a>
 
             </form>
 
         </div>
+
     </div>
 
 </main>

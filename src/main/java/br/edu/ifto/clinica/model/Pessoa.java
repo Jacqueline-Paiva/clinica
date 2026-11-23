@@ -1,12 +1,14 @@
 package br.edu.ifto.clinica.model;
 
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToOne;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -24,6 +26,10 @@ public class Pessoa {
 
     @NotBlank(message = "O telefone é obrigatório")
     private String telefone;
+
+    @Valid
+    @OneToOne(cascade = CascadeType.ALL)
+    private Usuario usuario;
 
     public Pessoa() {
     }
@@ -55,5 +61,13 @@ public class Pessoa {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

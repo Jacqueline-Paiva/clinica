@@ -31,11 +31,19 @@
                         Acesso ao sistema
                     </p>
 
+                    <!-- Cadastro realizado com sucesso -->
+                    <div th:if="${sucesso}"
+                         class="alert alert-success"
+                         th:text="${sucesso}">
+                    </div>
+
+                    <!-- Erro de autenticação -->
                     <div th:if="${param.error}"
                          class="alert alert-danger">
                         Usuário ou senha inválidos.
                     </div>
 
+                    <!-- Logout -->
                     <div th:if="${param.logout}"
                          class="alert alert-success">
                         Você saiu do sistema com sucesso.
@@ -44,6 +52,7 @@
                     <form th:action="@{/login}" method="post">
 
                         <div class="mb-3">
+
                             <label for="username"
                                    class="form-label">
                                 Usuário
@@ -55,9 +64,11 @@
                                    class="form-control"
                                    placeholder="Digite seu usuário"
                                    required>
+
                         </div>
 
                         <div class="mb-4">
+
                             <label for="password"
                                    class="form-label">
                                 Senha
@@ -69,6 +80,7 @@
                                    class="form-control"
                                    placeholder="Digite sua senha"
                                    required>
+
                         </div>
 
                         <button type="submit"
@@ -78,7 +90,23 @@
 
                     </form>
 
+                    <hr class="my-4">
+
+                    <div class="text-center">
+
+                        <p class="text-muted mb-2">
+                            Ainda não possui cadastro?
+                        </p>
+
+                        <a th:href="@{/cadastro}"
+                           class="btn btn-outline-primary w-100">
+                            Cadastre-se
+                        </a>
+
+                    </div>
+
                 </div>
+
             </div>
 
         </div>

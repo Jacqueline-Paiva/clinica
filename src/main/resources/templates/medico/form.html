@@ -36,21 +36,17 @@
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Nome</label>
-
                         <input class="form-control"
                                th:classappend="${#fields.hasErrors('nome')} ? 'is-invalid'"
                                type="text"
-                               th:field="*{nome}"
-                               placeholder="Nome do médico">
+                               th:field="*{nome}">
 
                         <div class="invalid-feedback"
-                             th:errors="*{nome}">
-                        </div>
+                             th:errors="*{nome}"></div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">CPF</label>
-
                         <input class="form-control"
                                th:classappend="${#fields.hasErrors('cpf')} ? 'is-invalid'"
                                type="text"
@@ -58,27 +54,22 @@
                                placeholder="000.000.000-00">
 
                         <div class="invalid-feedback"
-                             th:errors="*{cpf}">
-                        </div>
+                             th:errors="*{cpf}"></div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">E-mail</label>
-
                         <input class="form-control"
                                th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
                                type="email"
-                               th:field="*{email}"
-                               placeholder="email@exemplo.com">
+                               th:field="*{email}">
 
                         <div class="invalid-feedback"
-                             th:errors="*{email}">
-                        </div>
+                             th:errors="*{email}"></div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Telefone</label>
-
                         <input class="form-control"
                                th:classappend="${#fields.hasErrors('telefone')} ? 'is-invalid'"
                                type="text"
@@ -86,22 +77,76 @@
                                placeholder="(00) 00000-0000">
 
                         <div class="invalid-feedback"
-                             th:errors="*{telefone}">
-                        </div>
+                             th:errors="*{telefone}"></div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">CRM</label>
-
                         <input class="form-control"
                                th:classappend="${#fields.hasErrors('crm')} ? 'is-invalid'"
                                type="text"
-                               th:field="*{crm}"
-                               placeholder="Ex.: CRM-TO 1234">
+                               th:field="*{crm}">
 
                         <div class="invalid-feedback"
-                             th:errors="*{crm}">
+                             th:errors="*{crm}"></div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Especialidade</label>
+
+                        <select class="form-select"
+                                th:classappend="${#fields.hasErrors('especialidade')} ? 'is-invalid'"
+                                th:field="*{especialidade}">
+
+                            <option value="">Selecione</option>
+
+                            <option th:each="especialidade : ${especialidades}"
+                                    th:value="${especialidade.id}"
+                                    th:text="${especialidade.nome}">
+                            </option>
+
+                        </select>
+
+                        <div class="invalid-feedback"
+                             th:errors="*{especialidade}"></div>
+                    </div>
+
+                </div>
+
+                <div th:if="${medico.id == null}">
+
+                    <hr>
+
+                    <h5 class="mb-3">Dados de acesso</h5>
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Usuário</label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   th:classappend="${#fields.hasErrors('usuario.usuario')} ? 'is-invalid'"
+                                   th:field="*{usuario.usuario}">
+
+                            <div class="invalid-feedback"
+                                 th:errors="*{usuario.usuario}">
+                            </div>
                         </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Senha</label>
+
+                            <input type="password"
+                                   class="form-control"
+                                   th:classappend="${#fields.hasErrors('usuario.senha')} ? 'is-invalid'"
+                                   th:field="*{usuario.senha}">
+
+                            <div class="invalid-feedback"
+                                 th:errors="*{usuario.senha}">
+                            </div>
+                        </div>
+
                     </div>
 
                 </div>
@@ -122,6 +167,8 @@
     </div>
 
 </main>
+
+<script th:src="@{/js/mascaras.js}"></script>
 
 </body>
 </html>

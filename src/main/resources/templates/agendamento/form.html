@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::head},~{::main})}">
+
+<head th:replace="~{fragments/head :: head(~{::link})}">
+    <title>Novo Agendamento</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+
+<main class="container py-5">
+
+    <div class="mb-4">
+        <h1>Novo Agendamento</h1>
+
+        <p class="text-muted">
+            Selecione o horário disponível para atendimento.
+        </p>
+    </div>
+
+    <div th:if="${erro}"
+         class="alert alert-danger"
+         th:text="${erro}">
+    </div>
+
+    <div class="card shadow-sm">
+
+        <div class="card-body">
+
+            <form th:action="@{/agendamentos/salvar}"
+                  method="post">
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3"
+                         th:if="${pacienteLogado}">
+
+                        <label class="form-label">
+                            Paciente
+                        </label>
+
+                        <input type="text"
+                               class="form-control"
+                               th:value="${paciente != null ? paciente.nome : ''}"
+                               readonly>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3"
+                         th:if="${!pacienteLogado}">
+
+                        <label class="form-label">
+                            Paciente
+                        </label>
+
+                        <select name="pacienteId"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Selecione o paciente
+                            </option>
+
+                            <option th:each="paciente : ${pacientes}"
+                                    th:value="${paciente.id}"
+                                    th:text="${paciente.nome + ' - ' + paciente.cpf}">
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Tipo
+                        </label>
+
+                        <select name="tipo"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Selecione
+                            </option>
+
+                            <option th:each="tipo : ${tipos}"
+                                    th:value="${tipo}"
+                                    th:text="${tipo}">
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-12 mb-3">
+
+                        <label class="form-label">
+                            Horário disponível
+                        </label>
+
+                        <select name="agendaId"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Selecione o horário
+                            </option>
+
+                            <option th:each="horario : ${horarios}"
+                                    th:value="${horario.id}"
+                                    th:text="${horario.medico.especialidade.nome
+                                        + ' - Dr(a). '
+                                        + horario.medico.nome
+                                        + ' - '
+                                        + #temporals.format(horario.data, 'dd/MM/yyyy')
+                                        + ' às '
+                                        + #temporals.format(horario.horario, 'HH:mm')}">
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Agendar
+                </button>
+
+                <a th:href="@{/agendamentos}"
+                   class="btn btn-secondary">
+                    Cancelar
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+
+</main>
+
+</body>
+</html>

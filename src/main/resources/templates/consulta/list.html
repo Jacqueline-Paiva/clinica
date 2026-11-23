@@ -13,20 +13,13 @@
 
 <main class="container py-5">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="mb-4">
 
-        <div>
-            <h1>Consultas</h1>
+        <h1>Consultas</h1>
 
-            <p class="text-muted mb-0">
-                Consultas cadastradas na clínica
-            </p>
-        </div>
-
-        <a class="btn btn-primary"
-           th:href="@{/consultas/nova}">
-            + Nova consulta
-        </a>
+        <p class="text-muted mb-0">
+            Atendimentos originados de agendamentos com presença confirmada.
+        </p>
 
     </div>
 
@@ -35,19 +28,27 @@
          th:text="${sucesso}">
     </div>
 
+    <div th:if="${erro}"
+         class="alert alert-danger"
+         th:text="${erro}">
+    </div>
+
     <div class="table-responsive">
 
         <table class="table table-hover align-middle">
 
             <thead class="table-light">
+
                 <tr>
                     <th>Data e hora</th>
                     <th>Paciente</th>
                     <th>Médico</th>
+                    <th>Tipo</th>
                     <th>Valor</th>
                     <th>Observação</th>
                     <th>Ações</th>
                 </tr>
+
             </thead>
 
             <tbody>
@@ -55,36 +56,94 @@
                 <tr th:each="consulta : ${consultas}">
 
                     <td>
-                        <span th:text="${#temporals.format(consulta.data, 'dd/MM/yyyy')}">
+
+                        <span th:text="${#temporals.format(
+                            consulta.data,
+                            'dd/MM/yyyy'
+                        )}">
                         </span>
 
                         <span class="d-block text-muted small"
-                              th:text="'às ' + ${#temporals.format(consulta.data, 'HH:mm')}">
+                              th:text="'às ' + ${#temporals.format(
+                                consulta.data,
+                                'HH:mm'
+                              )}">
                         </span>
+
                     </td>
 
-                    <td th:text="${consulta.paciente.nome}"></td>
-
-                    <td th:text="${consulta.medico.nome}"></td>
-
-                    <td th:text="'R$ ' + ${#numbers.formatDecimal(consulta.valor, 1, 2)}">
+                    <td th:text="${consulta.paciente.nome}">
                     </td>
 
-                    <td th:text="${consulta.observacao}"></td>
+                    <td th:text="${consulta.medico.nome}">
+                    </td>
+
+                    <td th:text="${consulta.agendamento != null
+                        ? consulta.agendamento.tipo
+                        : '-'}">
+                    </td>
+
+                    <td>
+
+                        <span th:if="${consulta.valor != null}"
+                              th:text="'R$ ' + ${#numbers.formatDecimal(
+                                consulta.valor,
+                                1,
+                                2
+                              )}">
+                        </span>
+
+                        <span th:if="${consulta.valor == null}"
+                              class="text-muted">
+                            Não informado
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <span th:if="${consulta.observacao != null
+                                     and !consulta.observacao.isBlank()}"
+                              th:text="${consulta.observacao}">
+                        </span>
+
+                        <span th:if="${consulta.observacao == null
+                                     or consulta.observacao.isBlank()}"
+                              class="text-muted">
+                            Não informado
+                        </span>
+
+                    </td>
 
                     <td class="text-nowrap">
 
-                        <a class="btn btn-secondary btn-sm"
+                        <a sec:authorize="hasAnyRole('MEDICO','ADMIN')"
+                           class="btn btn-secondary btn-sm"
                            th:href="@{/consultas/editar/{id}(id=${consulta.id})}">
-                            Editar
+
+                            <span th:text="${consulta.valor == null
+                                ? 'Preencher'
+                                : 'Editar'}">
+                            </span>
+
                         </a>
 
                         <a sec:authorize="hasRole('ADMIN')"
                            class="btn btn-danger btn-sm"
-                           th:href="@{/consultas/excluir/{id}(id=${consulta.id})}">
+                           th:href="@{/consultas/excluir/{id}(id=${consulta.id})}"
+                           onclick="return confirm('Deseja excluir esta consulta?')">
                             Excluir
                         </a>
 
+                    </td>
+
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(consultas)}">
+
+                    <td colspan="7"
+                        class="text-center text-muted py-4">
+                        Nenhuma consulta encontrada.
                     </td>
 
                 </tr>
